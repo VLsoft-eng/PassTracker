@@ -1,4 +1,6 @@
 package backend.academy.passtracker.core.dto;
 
-public record UserCreateDto(String email, String fullName, String password) {
+import backend.academy.passtracker.core.enumeration.UserRole;
+
+public record UserCreateDto(String email, String fullName, String password, UserRole userRole) {
 }

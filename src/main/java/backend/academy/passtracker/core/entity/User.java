@@ -2,18 +2,16 @@ package backend.academy.passtracker.core.entity;
 
 import backend.academy.passtracker.core.enumeration.UserRole;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.UUID;
 
-@RequiredArgsConstructor
-@NoArgsConstructor
+@Builder
 @Getter
 @Setter
 @Entity(name = "users")
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
