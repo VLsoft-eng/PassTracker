@@ -17,6 +17,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -29,6 +30,7 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final RegistrationMapper registrationMapper;
 
+    @Transactional
     public LoginResponse register(RegistrationRequest registrationRequest) {
 
         if (registrationRequest.userRole().equals(UserRole.ROLE_ADMIN)) {
@@ -51,6 +53,7 @@ public class AuthServiceImpl implements AuthService {
         );
     }
 
+    @Transactional
     public LoginResponse login(LoginRequest request) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 request.email(),

@@ -1,0 +1,68 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <changeSet id="v1-1" author="Sitdikov Yura">
+        <createTable tableName="users">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="email" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="password" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="full_name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_accepted" type="bool" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="v1-2" author="Sitdikov Yura">
+        <createTable tableName="faculty">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="faculty_name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="v1-3" author="Sitdikov Yura">
+        <createTable tableName="groups">
+            <column name="group_number" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="faculty_id" type="UUID">
+                <constraints nullable="false" foreignKeyName="fk_group_faculty" references="faculty(id)"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="v1-4" author="Sitdikov Yura">
+        <createTable tableName="user_group">
+            <column name="user_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="group_number" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="user_group" columnNames="user_id, group_number" constraintName="pk_user_group"/>
+        <addForeignKeyConstraint baseTableName="user_group" baseColumnNames="user_id"
+                                 referencedTableName="users" referencedColumnNames="id"
+                                 constraintName="fk_user_group_user"/>
+        <addForeignKeyConstraint baseTableName="user_group" baseColumnNames="group_number"
+                                 referencedTableName="groups" referencedColumnNames="group_number"
+                                 constraintName="fk_user_group_group"/>
+    </changeSet>
+</databaseChangeLog>

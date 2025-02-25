@@ -35,9 +35,9 @@ public final class GlobalExceptionHandler {
         );
     }
 
-    @ExceptionHandler(AccountNotFoundException.class)
+    @ExceptionHandler(FacultyNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<Response> handleAccountNotFoundException(AccountNotFoundException e) {
+    public ResponseEntity<Response> handleAccountNotFoundException(FacultyNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                 new Response(
                         HttpStatus.NOT_FOUND.value(),
@@ -47,9 +47,9 @@ public final class GlobalExceptionHandler {
         );
     }
 
-    @ExceptionHandler(OperationNotFoundException.class)
+    @ExceptionHandler(GroupNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<Response> handleOperationNotFoundException(OperationNotFoundException e) {
+    public ResponseEntity<Response> handleOperationNotFoundException(GroupNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                 new Response(
                         HttpStatus.NOT_FOUND.value(),

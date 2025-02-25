@@ -5,6 +5,7 @@ import backend.academy.passtracker.core.utils.UserRoleConverter;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @Builder
@@ -26,6 +27,14 @@ public class User {
 
     @Column(name = "full_name")
     private String fullName;
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_group",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "group_number")
+    )
+    private List<Group> groups;
 
     @Column(name = "role")
     @Convert(converter = UserRoleConverter.class)

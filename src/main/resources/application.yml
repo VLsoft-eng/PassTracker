@@ -5,7 +5,7 @@ spring:
     servlet:
       path: /api/v1
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/wallet}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/team_dev_db}
     username: ${POSTGRES_USER:postgres}
     password: ${POSTGRES_PASSWORD:postgres}
     driverClassName: org.postgresql.Driver
