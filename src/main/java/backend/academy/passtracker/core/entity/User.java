@@ -13,6 +13,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -29,4 +30,8 @@ public class User {
     @Column(name = "role")
     @Convert(converter = UserRoleConverter.class)
     private UserRole role;
+
+    @Column(name = "is_accepted")
+    private Boolean isAccepted = false;
+
 }

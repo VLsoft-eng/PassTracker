@@ -2,6 +2,7 @@ package backend.academy.passtracker.core.service.impl;
 
 import backend.academy.passtracker.core.dto.UserCreateDto;
 import backend.academy.passtracker.core.enumeration.UserRole;
+import backend.academy.passtracker.core.exception.BadRequestException;
 import backend.academy.passtracker.core.mapper.RegistrationMapper;
 import backend.academy.passtracker.core.config.security.userDetails.CustomUserDetails;
 import backend.academy.passtracker.core.config.security.userDetails.CustomUserDetailsService;
@@ -29,8 +30,16 @@ public class AuthServiceImpl implements AuthService {
     private final RegistrationMapper registrationMapper;
 
     public LoginResponse register(RegistrationRequest registrationRequest) {
+
+        if (registrationRequest.userRole().equals(UserRole.ROLE_ADMIN)) {
+            throw new BadRequestException("Нельзя зарегистрироваться с ролью 'админ'");
+        }
+
         String hashedPassword = passwordEncoder.encode(registrationRequest.password());
-        UserCreateDto userCreateDto = registrationMapper.toUserCreateDto(registrationRequest, hashedPassword, UserRole.ROLE_UNKNOWN);
+        UserCreateDto userCreateDto = registrationMapper.toUserCreateDto(
+                registrationRequest,
+                hashedPassword
+        );
 
         userService.createUser(userCreateDto);
 
