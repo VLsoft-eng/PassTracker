@@ -1,9 +1,9 @@
 spring:
   application:
     name: PassTracker
-  mvc:
-    servlet:
-      path: /api/v1
+#  mvc:
+#    servlet:
+#      path: /api/v1
   datasource:
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/wallet}
     username: ${POSTGRES_USER:postgres}

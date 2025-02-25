@@ -5,5 +5,5 @@ import backend.academy.passtracker.core.dto.UserCreateDto;
 import java.util.UUID;
 
 public interface UserService {
-    public void createUser(UserCreateDto userCreateDto);
+    void createUser(UserCreateDto userCreateDto);
 }
