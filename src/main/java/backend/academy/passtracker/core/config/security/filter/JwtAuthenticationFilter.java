@@ -1,6 +1,6 @@
-package backend.academy.passtracker.core.security.filter;
+package backend.academy.passtracker.core.config.security.filter;
 
-import backend.academy.passtracker.core.security.userDetails.CustomUserDetailsService;
+import backend.academy.passtracker.core.config.security.userDetails.CustomUserDetailsService;
 import backend.academy.passtracker.core.service.JwtService;
 import io.micrometer.common.util.StringUtils;
 import jakarta.servlet.FilterChain;

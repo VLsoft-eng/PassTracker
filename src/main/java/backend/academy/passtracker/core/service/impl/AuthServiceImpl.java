@@ -3,8 +3,8 @@ package backend.academy.passtracker.core.service.impl;
 import backend.academy.passtracker.core.dto.UserCreateDto;
 import backend.academy.passtracker.core.enumeration.UserRole;
 import backend.academy.passtracker.core.mapper.RegistrationMapper;
-import backend.academy.passtracker.core.security.userDetails.CustomUserDetails;
-import backend.academy.passtracker.core.security.userDetails.CustomUserDetailsService;
+import backend.academy.passtracker.core.config.security.userDetails.CustomUserDetails;
+import backend.academy.passtracker.core.config.security.userDetails.CustomUserDetailsService;
 import backend.academy.passtracker.core.service.AuthService;
 import backend.academy.passtracker.core.service.JwtService;
 import backend.academy.passtracker.core.service.UserService;
@@ -28,11 +28,18 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final RegistrationMapper registrationMapper;
 
-    public void register(RegistrationRequest registrationRequest) {
+    public LoginResponse register(RegistrationRequest registrationRequest) {
         String hashedPassword = passwordEncoder.encode(registrationRequest.password());
         UserCreateDto userCreateDto = registrationMapper.toUserCreateDto(registrationRequest, hashedPassword, UserRole.ROLE_UNKNOWN);
 
         userService.createUser(userCreateDto);
+
+        return login(
+                new LoginRequest(
+                        registrationRequest.email(),
+                        registrationRequest.password()
+                )
+        );
     }
 
     public LoginResponse login(LoginRequest request) {

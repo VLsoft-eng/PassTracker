@@ -1,6 +1,6 @@
 package backend.academy.passtracker.core.service.impl;
 
-import backend.academy.passtracker.core.security.userDetails.CustomUserDetails;
+import backend.academy.passtracker.core.config.security.userDetails.CustomUserDetails;
 import backend.academy.passtracker.core.service.JwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

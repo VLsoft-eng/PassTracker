@@ -1,4 +1,4 @@
-package backend.academy.passtracker.core.security.userDetails;
+package backend.academy.passtracker.core.config.security.userDetails;
 
 import backend.academy.passtracker.core.entity.User;
 import backend.academy.passtracker.core.repository.UserRepository;
