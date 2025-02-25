@@ -17,7 +17,13 @@
             <column name="full_name" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
+            <column name="group_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
             <column name="role" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_accepted" type="bool" defaultValue="false">
                 <constraints nullable="false"/>
             </column>
         </createTable>

@@ -23,7 +23,7 @@ public class UserServiceImpl implements UserService {
             throw new EmailAlreadyUsedException(ExceptionMessage.EMAIL_ALREADY_USED);
         }
 
-        User user = userMapper.toEntity(userCreateDto);
+        User user = userMapper.createDTOtoEntity(userCreateDto);
 
         userRepository.save(user);
     }
