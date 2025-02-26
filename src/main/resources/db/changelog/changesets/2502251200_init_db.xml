@@ -69,4 +69,16 @@
                                  referencedTableName="groups" referencedColumnNames="group_number"
                                  constraintName="fk_user_group_group"/>
     </changeSet>
+
+    <changeSet id="v1-5" author="Sitdikov Yura">
+        <insert tableName="users">
+            <column name="id" value="769da7a7-fe2c-44ae-900f-2d5cb4e4ccaf" />
+            <column name="email" value="admin@admin.com" />
+            <column name="password" value="$2a$10$kww7UUS41iqqAL0zY7kireJo4ybnz2W3ofWWWUYsWal9KwB4LyMu6" />
+            <column name="full_name" value="admin" />
+            <column name="role" value="admin" />
+            <column name="is_accepted" value="true" />
+            <column name="is_deleted" value="false" />
+        </insert>
+    </changeSet>
 </databaseChangeLog>
