@@ -1,5 +1,6 @@
 package backend.academy.passtracker.core.controller;
 
+import backend.academy.passtracker.core.enumeration.UserRole;
 import backend.academy.passtracker.core.service.AdminService;
 import backend.academy.passtracker.rest.model.auth.RegistrationRequest;
 import backend.academy.passtracker.rest.model.faculty.CreateFacultyRequest;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController

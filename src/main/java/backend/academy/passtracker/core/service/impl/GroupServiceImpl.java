@@ -26,9 +26,14 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public GroupDTO getGroupById(Long groupNumber) {
         return groupMapper.entityToDTO(
-                groupRepository.findById(groupNumber)
-                        .orElseThrow(() -> new GroupNotFoundException(groupNumber))
+                getRawGroupById(groupNumber)
         );
+    }
+
+    @Override
+    public Group getRawGroupById(Long groupNumber) {
+        return groupRepository.findById(groupNumber)
+                .orElseThrow(() -> new GroupNotFoundException(groupNumber));
     }
 
     @Override

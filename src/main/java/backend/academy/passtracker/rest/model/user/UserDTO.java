@@ -24,4 +24,6 @@ public class UserDTO {
 
     private Boolean isAccepted;
 
+    private Boolean isDeleted;
+
 }

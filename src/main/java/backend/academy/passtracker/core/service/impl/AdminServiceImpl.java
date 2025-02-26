@@ -1,6 +1,7 @@
 package backend.academy.passtracker.core.service.impl;
 
 import backend.academy.passtracker.core.dto.UserCreateDto;
+import backend.academy.passtracker.core.entity.Group;
 import backend.academy.passtracker.core.enumeration.UserRole;
 import backend.academy.passtracker.core.exception.BadRequestException;
 import backend.academy.passtracker.core.exception.ForbiddenException;
@@ -22,7 +23,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -56,7 +59,12 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public Page<UserDTO> getUsers(String fullName, String email, Boolean isAccepted, Pageable pageable) {
+    public Page<UserDTO> getUsers(
+            String fullName,
+            String email,
+            Boolean isAccepted,
+            Pageable pageable
+    ) {
         return userService.getUsers(fullName, email, isAccepted, pageable);
     }
 
@@ -66,10 +74,24 @@ public class AdminServiceImpl implements AdminService {
             throw new BadRequestException("Нельзя зарегистрироваться с ролью 'админ'");
         }
 
+        if (registrationRequest.groupNumbers() == null
+                || registrationRequest.groupNumbers().isEmpty()) {
+            throw new BadRequestException("Не выбрана группа");
+        }
+
+        if (registrationRequest.userRole().equals(UserRole.ROLE_STUDENT)
+                && registrationRequest.groupNumbers().size() > 1) {
+            throw new BadRequestException("У студента не может быть больше одной группы");
+        }
+
+        List<Group> groups = registrationRequest.groupNumbers()
+                .stream().map(groupService::getRawGroupById).toList();
+
         String hashedPassword = passwordEncoder.encode(registrationRequest.password());
         UserCreateDto userCreateDto = registrationMapper.toUserCreateDto(
                 registrationRequest,
-                hashedPassword
+                hashedPassword,
+                groups
         );
 
         return userService.createUser(userCreateDto);
