@@ -1,5 +1,6 @@
 package backend.academy.passtracker.core.service;
 
+import backend.academy.passtracker.core.enumeration.UserRole;
 import backend.academy.passtracker.rest.model.auth.RegistrationRequest;
 import backend.academy.passtracker.rest.model.faculty.CreateFacultyRequest;
 import backend.academy.passtracker.rest.model.faculty.FacultyDTO;
@@ -9,6 +10,7 @@ import backend.academy.passtracker.rest.model.user.UserDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface AdminService {
@@ -21,7 +23,12 @@ public interface AdminService {
 
     GroupDTO deleteGroup(Long groupId);
 
-    Page<UserDTO> getUsers(String fullName, String email, Boolean isAccepted, Pageable pageable);
+    Page<UserDTO> getUsers(
+            String fullName,
+            String email,
+            Boolean isAccepted,
+            Pageable pageable
+    );
 
     UserDTO createUser(RegistrationRequest registrationRequest);
 

@@ -1,12 +1,14 @@
 package backend.academy.passtracker.core.service.impl;
 
 import backend.academy.passtracker.core.dto.UserCreateDto;
+import backend.academy.passtracker.core.entity.Group;
 import backend.academy.passtracker.core.enumeration.UserRole;
 import backend.academy.passtracker.core.exception.BadRequestException;
 import backend.academy.passtracker.core.mapper.RegistrationMapper;
 import backend.academy.passtracker.core.config.security.userDetails.CustomUserDetails;
 import backend.academy.passtracker.core.config.security.userDetails.CustomUserDetailsService;
 import backend.academy.passtracker.core.service.AuthService;
+import backend.academy.passtracker.core.service.GroupService;
 import backend.academy.passtracker.core.service.JwtService;
 import backend.academy.passtracker.core.service.UserService;
 import backend.academy.passtracker.rest.model.auth.LoginRequest;
@@ -19,11 +21,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Service
 public class AuthServiceImpl implements AuthService {
 
     private final UserService userService;
+    private final GroupService groupService;
     private final CustomUserDetailsService customUserDetailsService;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
@@ -37,10 +42,24 @@ public class AuthServiceImpl implements AuthService {
             throw new BadRequestException("Нельзя зарегистрироваться с ролью 'админ'");
         }
 
+        if (registrationRequest.groupNumbers() == null
+                || registrationRequest.groupNumbers().isEmpty()) {
+            throw new BadRequestException("Не выбрана группа");
+        }
+
+        if (registrationRequest.userRole().equals(UserRole.ROLE_STUDENT)
+                && registrationRequest.groupNumbers().size() > 1) {
+            throw new BadRequestException("У студента не может быть больше одной группы");
+        }
+
+        List<Group> groups = registrationRequest.groupNumbers()
+                .stream().map(groupService::getRawGroupById).toList();
+
         String hashedPassword = passwordEncoder.encode(registrationRequest.password());
         UserCreateDto userCreateDto = registrationMapper.toUserCreateDto(
                 registrationRequest,
-                hashedPassword
+                hashedPassword,
+                groups
         );
 
         userService.createUser(userCreateDto);

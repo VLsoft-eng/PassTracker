@@ -41,6 +41,9 @@ public class User {
     private UserRole role;
 
     @Column(name = "is_accepted")
-    private Boolean isAccepted = false;
+    private Boolean isAccepted;
+
+    @Column(name = "is_deleted")
+    private Boolean isDeleted = false;
 
 }
