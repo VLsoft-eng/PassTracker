@@ -23,4 +23,7 @@ public class Group {
     @JoinColumn(name = "faculty_id", nullable = false)
     private Faculty faculty;
 
+    @Column(name = "is_deleted")
+    private Boolean isDeleted;
+
 }

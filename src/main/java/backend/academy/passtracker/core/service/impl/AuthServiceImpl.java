@@ -9,9 +9,9 @@ import backend.academy.passtracker.core.config.security.userDetails.CustomUserDe
 import backend.academy.passtracker.core.service.AuthService;
 import backend.academy.passtracker.core.service.JwtService;
 import backend.academy.passtracker.core.service.UserService;
-import backend.academy.passtracker.rest.model.LoginRequest;
-import backend.academy.passtracker.rest.model.LoginResponse;
-import backend.academy.passtracker.rest.model.RegistrationRequest;
+import backend.academy.passtracker.rest.model.auth.LoginRequest;
+import backend.academy.passtracker.rest.model.auth.LoginResponse;
+import backend.academy.passtracker.rest.model.auth.RegistrationRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

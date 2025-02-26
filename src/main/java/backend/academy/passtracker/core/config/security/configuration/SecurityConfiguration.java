@@ -1,7 +1,7 @@
 package backend.academy.passtracker.core.config.security.configuration;
 
 import backend.academy.passtracker.core.config.security.filter.JwtAuthenticationFilter;
-import backend.academy.passtracker.rest.model.Response;
+import backend.academy.passtracker.rest.model.common.Response;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +64,7 @@ public class SecurityConfiguration {
                 .cors(cors -> cors.configurationSource(corsConfiguration()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(requests -> requests
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers(unprotectedEndpoints().toArray(new String[]{})).permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session ->

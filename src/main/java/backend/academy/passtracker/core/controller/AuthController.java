@@ -1,9 +1,9 @@
 package backend.academy.passtracker.core.controller;
 
 import backend.academy.passtracker.core.service.AuthService;
-import backend.academy.passtracker.rest.model.LoginRequest;
-import backend.academy.passtracker.rest.model.LoginResponse;
-import backend.academy.passtracker.rest.model.RegistrationRequest;
+import backend.academy.passtracker.rest.model.auth.LoginRequest;
+import backend.academy.passtracker.rest.model.auth.LoginResponse;
+import backend.academy.passtracker.rest.model.auth.RegistrationRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

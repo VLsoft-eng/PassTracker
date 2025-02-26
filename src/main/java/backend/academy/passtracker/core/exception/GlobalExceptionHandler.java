@@ -1,6 +1,6 @@
 package backend.academy.passtracker.core.exception;
 
-import backend.academy.passtracker.rest.model.Response;
+import backend.academy.passtracker.rest.model.common.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -50,6 +50,18 @@ public final class GlobalExceptionHandler {
     @ExceptionHandler(GroupNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<Response> handleOperationNotFoundException(GroupNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                new Response(
+                        HttpStatus.NOT_FOUND.value(),
+                        LocalDateTime.now(),
+                        e.getMessage()
+                )
+        );
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<Response> handleUserNotFoundException(UserNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                 new Response(
                         HttpStatus.NOT_FOUND.value(),
