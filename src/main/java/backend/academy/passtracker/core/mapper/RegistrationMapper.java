@@ -1,7 +1,7 @@
 package backend.academy.passtracker.core.mapper;
 
 import backend.academy.passtracker.core.dto.UserCreateDto;
-import backend.academy.passtracker.rest.model.RegistrationRequest;
+import backend.academy.passtracker.rest.model.auth.RegistrationRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

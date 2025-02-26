@@ -12,11 +12,13 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
 
     @Query(
             value = "select * from groups g " +
-                    "where g.faculty_id = :facultyId",
+                    "where g.faculty_id = :facultyId " +
+                    "and g.is_deleted = :isDeleted",
             nativeQuery = true
     )
-    List<Group> findAllByFacultyId(
-            @Param("facultyId") UUID facultyId
+    List<Group> findAllByFacultyIdAndIsDeleted(
+            @Param("facultyId") UUID facultyId,
+            @Param("isDeleted") Boolean isDeleted
     );
 
 }

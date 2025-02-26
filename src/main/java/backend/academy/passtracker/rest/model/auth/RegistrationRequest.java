@@ -1,4 +1,4 @@
-package backend.academy.passtracker.rest.model;
+package backend.academy.passtracker.rest.model.auth;
 
 import backend.academy.passtracker.core.enumeration.UserRole;
 

@@ -1,7 +1,7 @@
 package backend.academy.passtracker.core.controller;
 
 import backend.academy.passtracker.core.service.FacultyService;
-import backend.academy.passtracker.rest.model.FacultyDTO;
+import backend.academy.passtracker.rest.model.faculty.FacultyDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

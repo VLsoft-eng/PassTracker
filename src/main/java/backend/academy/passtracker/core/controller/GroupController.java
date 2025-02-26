@@ -1,7 +1,7 @@
 package backend.academy.passtracker.core.controller;
 
 import backend.academy.passtracker.core.service.GroupService;
-import backend.academy.passtracker.rest.model.GroupDTO;
+import backend.academy.passtracker.rest.model.group.GroupDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,9 +24,10 @@ public class GroupController {
 
     @GetMapping("/byFaculty/{facultyId}")
     private List<GroupDTO> getGroupsByFacultyId(
-            @PathVariable("facultyId") UUID facultyId
+            @PathVariable("facultyId") UUID facultyId,
+            @RequestParam Boolean isDeleted
     ) {
-        return groupService.getGroupsByFacultyId(facultyId);
+        return groupService.getGroupsByFacultyId(facultyId, isDeleted);
     }
 
 }

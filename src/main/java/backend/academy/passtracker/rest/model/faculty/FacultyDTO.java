@@ -1,4 +1,4 @@
-package backend.academy.passtracker.rest.model;
+package backend.academy.passtracker.rest.model.faculty;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Id;
