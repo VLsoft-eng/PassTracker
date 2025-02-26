@@ -16,6 +16,12 @@ spring:
   liquibase:
     enabled: true
     change-log: classpath:/db/changelog/dbchangelog.xml
+  data:
+    redis:
+      host: redis
+      port: 6380
+      username: redis_user
+      password: redis_pass
 
 jwt:
   signing-key: "my-super-long-secret-key-that-can-secure-your-account-data"

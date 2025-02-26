@@ -1,6 +1,5 @@
 version: '3.9'
 services:
-  # Сервис для разворачивания контейнера с базой данных
   postgres:
     container_name: postgres
     image: postgres:12
@@ -15,7 +14,6 @@ services:
       - wallet-network
     ports:
       - "5430:5432"
-  # Сервис для разворачивания контейнера с приложением
   webapi:
     build:
       dockerfile: Dockerfile
@@ -37,7 +35,45 @@ services:
       retries: 5
       start_period: 15s
       timeout: 10s
-
+  redis:
+    image: redis:latest
+    environment:
+      - REDIS_PASSWORD=redis_pass
+      - REDIS_USER=redis_user
+      - REDIS_USER_PASSWORD=redis_pass
+    ports:
+      - "6380:6380"
+    volumes:
+      - ./redisdata:/data
+    networks:
+      - wallet-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    command: >
+      sh -c '
+        mkdir -p /usr/local/etc/redis &&
+        echo "bind 0.0.0.0" > /usr/local/etc/redis/redis.conf &&
+        echo "requirepass $REDIS_PASSWORD" >> /usr/local/etc/redis/redis.conf &&
+        echo "appendonly yes" >> /usr/local/etc/redis/redis.conf &&
+        echo "appendfsync everysec" >> /usr/local/etc/redis/redis.conf &&
+        echo "user default on nopass ~* +@all" > /usr/local/etc/redis/users.acl &&
+        echo "user $REDIS_USER on >$REDIS_USER_PASSWORD ~* +@all" >> /usr/local/etc/redis/users.acl &&
+        redis-server /usr/local/etc/redis/redis.conf --aclfile /usr/local/etc/redis/users.acl
+      '
+    healthcheck:
+      test: [ "CMD", "redis-cli", "-a", "$REDIS_PASSWORD", "ping" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: unless-stopped
+    tty: true
+    stdin_open: true
 networks:
   wallet-network:
     driver: bridge
