@@ -43,7 +43,8 @@ public class AuthServiceImpl implements AuthService {
         }
 
         if (registrationRequest.groupNumbers() == null
-                || registrationRequest.groupNumbers().isEmpty()) {
+//                || registrationRequest.groupNumbers().isEmpty()
+        ) {
             throw new BadRequestException("Не выбрана группа");
         }
 
