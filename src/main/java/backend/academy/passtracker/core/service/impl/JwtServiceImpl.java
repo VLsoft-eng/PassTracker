@@ -33,10 +33,6 @@ public class JwtServiceImpl implements JwtService {
         return extractClaim(token, Claims::getSubject);
     }
 
-    public UUID extractTokenId(String token) {
-        return extractClaim(token, claims -> UUID.fromString(claims.get("token_id", String.class)));
-    }
-
     public String generateToken(CustomUserDetails user) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("id", user.getId());
@@ -46,15 +42,26 @@ public class JwtServiceImpl implements JwtService {
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String userName = extractUserName(token);
-        return (userName.equals(userDetails.getUsername())) && !isTokenExpired(token);
+        return (userName.equals(userDetails.getUsername())) && !isTokenExpired(token) && !isTokenBanned(token);
     }
 
-    public void banToken(UUID tokenId, long ttlms) {
-        bannedTokenRepository.addBannedToken(tokenId, ttlms);
+    public void banToken(String token) {
+        UUID tokenId = extractTokenId(token);
+        Long expirationMs = extractExpirationMs(token);
+        bannedTokenRepository.addBannedToken(tokenId, expirationMs);
     }
 
-    public Boolean isTokenBanned(UUID tokenId) {
+    private Boolean isTokenBanned(String token) {
+        UUID tokenId = extractTokenId(token);
         return bannedTokenRepository.isTokenBanned(tokenId);
+    }
+
+    private Long extractExpirationMs(String token) {
+        return extractExpiration(token).getTime();
+    }
+
+    private UUID extractTokenId(String token) {
+        return extractClaim(token, claims -> UUID.fromString(claims.get("token_id", String.class)));
     }
 
     private <T> T extractClaim(String token, Function<Claims, T> claimsResolvers) {
@@ -73,7 +80,7 @@ public class JwtServiceImpl implements JwtService {
         return extractExpiration(token).before(new Date());
     }
 
-    private Date extractExpiration(String token) {
+    Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
 

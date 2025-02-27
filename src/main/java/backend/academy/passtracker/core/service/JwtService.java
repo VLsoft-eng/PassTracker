@@ -12,9 +12,5 @@ public interface JwtService {
 
     boolean isTokenValid(String token, UserDetails userDetails);
 
-    void banToken(UUID tokenId, long ttlms);
-
-    Boolean isTokenBanned(UUID tokenId);
-
-    UUID extractTokenId(String token);
+    void banToken(String token);
 }

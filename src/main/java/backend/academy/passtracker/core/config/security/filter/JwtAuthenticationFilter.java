@@ -16,7 +16,6 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.UUID;
 
 @Lazy
 @Component
@@ -49,18 +48,16 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
         String authHeaderValue = request.getHeader(AUTHORIZATION_HEADER);
         String token = null;
         String username = null;
-        UUID tokenId = null;
 
         if (authHeaderValue != null && authHeaderValue.startsWith(TOKEN_PREFIX)) {
             token = authHeaderValue.substring(TOKEN_PREFIX.length());
             username = jwtService.extractUserName(token);
-            tokenId = jwtService.extractTokenId(token);
         }
 
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null && tokenId != null) {
+        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userService.loadUserByUsername(username);
 
-            if (jwtService.isTokenValid(token, userDetails) && !jwtService.isTokenBanned(tokenId)) {
+            if (jwtService.isTokenValid(token, userDetails)) {
                 UsernamePasswordAuthenticationToken authenticationToken =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
