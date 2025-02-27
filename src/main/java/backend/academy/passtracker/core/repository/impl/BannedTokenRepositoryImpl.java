@@ -20,4 +20,9 @@ public class BannedTokenRepositoryImpl implements BannedTokenRepository {
     public void addBannedToken(UUID tokenId, long ttlMs) {
         redisTemplate.opsForValue().set(tokenId.toString(), "Blacklisted", ttlMs, TimeUnit.MILLISECONDS);
     }
+
+    @Override
+    public Boolean isTokenBanned(UUID tokenId) {
+        return redisTemplate.opsForSet().isMember(tokenId.toString(), "Blacklisted");
+    }
 }

@@ -1,27 +1,22 @@
 package backend.academy.passtracker.core.config.security.filter;
 
-import backend.academy.passtracker.core.config.security.userDetails.CustomUserDetails;
 import backend.academy.passtracker.core.config.security.userDetails.CustomUserDetailsService;
 import backend.academy.passtracker.core.service.JwtService;
-import io.micrometer.common.util.StringUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.UUID;
 
 @Lazy
 @Component
@@ -54,16 +49,18 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
         String authHeaderValue = request.getHeader(AUTHORIZATION_HEADER);
         String token = null;
         String username = null;
+        UUID tokenId = null;
 
         if (authHeaderValue != null && authHeaderValue.startsWith(TOKEN_PREFIX)) {
             token = authHeaderValue.substring(TOKEN_PREFIX.length());
             username = jwtService.extractUserName(token);
+            tokenId = jwtService.extractTokenId(token);
         }
 
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null && tokenId != null) {
             UserDetails userDetails = userService.loadUserByUsername(username);
 
-            if (jwtService.isTokenValid(token, userDetails)) {
+            if (jwtService.isTokenValid(token, userDetails) && !jwtService.isTokenBanned(tokenId)) {
                 UsernamePasswordAuthenticationToken authenticationToken =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
