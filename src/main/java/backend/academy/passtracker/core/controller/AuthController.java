@@ -42,4 +42,12 @@ public class AuthController {
         return authService.login(loginRequest);
     }
 
+    @Operation(
+            summary = "Выход из учетной записи",
+            description = "Позволяет пользователю выйти из учетной записи"
+    )
+    @PostMapping("/logout")
+    private void logout() {
+        authService.logout();
+    }
 }

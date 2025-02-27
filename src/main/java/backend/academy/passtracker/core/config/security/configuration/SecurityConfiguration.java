@@ -31,11 +31,9 @@ import java.util.List;
 public class SecurityConfiguration {
 
     @Lazy
-    @Autowired
-    private JwtAuthenticationFilter jwtAuthFilter;
+    private final JwtAuthenticationFilter jwtAuthFilter;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
     @Bean
     public CorsConfigurationSource corsConfiguration() {
@@ -52,7 +50,8 @@ public class SecurityConfiguration {
     @Bean
     public List<String> unprotectedEndpoints() {
         return List.of(
-                "/auth/**"
+                "/auth/register",
+                "/auth/login"
         );
     }
 
