@@ -8,7 +8,6 @@ spring:
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/wallet}
     username: ${POSTGRES_USER:postgres}
     password: ${POSTGRES_PASSWORD:postgres}
-    driverClassName: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: validate
@@ -20,7 +19,6 @@ spring:
     redis:
       host: redis
       port: 6380
-      username: redis_user
       password: redis_pass
 
 jwt:
