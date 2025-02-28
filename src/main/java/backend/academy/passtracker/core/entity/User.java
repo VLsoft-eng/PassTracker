@@ -28,20 +28,13 @@ public class User {
     @Column(name = "full_name", nullable = false)
     private String fullName;
 
-    @ManyToMany
-    @JoinTable(
-            name = "user_group",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "group_number")
-    )
-    private List<Group> groups;
+    @ManyToOne
+    @JoinColumn(name = "group_number")
+    private Group studentGroup;
 
     @Column(name = "role", nullable = false)
     @Convert(converter = UserRoleConverter.class)
     private UserRole role;
-
-    @Column(name = "is_accepted")
-    private Boolean isAccepted;
 
     @Column(name = "is_blocked", nullable = false)
     private Boolean isBlocked = false;

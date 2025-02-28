@@ -10,8 +10,7 @@ public record UserCreateDto(
         String fullName,
         String password,
         UserRole userRole,
-        Boolean isAccepted,
-        Boolean isDeleted,
-        List<Group> groups
+        Boolean isBlocked,
+        Group studentGroup
 ) {
 }

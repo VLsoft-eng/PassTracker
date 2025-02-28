@@ -19,10 +19,6 @@ public class Group {
     @Column(name = "group_number")
     private Long groupNumber;
 
-    @ManyToOne
-    @JoinColumn(name = "faculty_id", nullable = false)
-    private Faculty faculty;
-
     @Column(name = "is_deleted")
     private Boolean isDeleted;
 

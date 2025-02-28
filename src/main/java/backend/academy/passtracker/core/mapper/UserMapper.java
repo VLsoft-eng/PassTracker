@@ -13,6 +13,7 @@ public interface UserMapper {
     @Mapping(target = "role", source = "userCreateDto.userRole")
     User createDTOtoEntity(UserCreateDto userCreateDto);
 
+    @Mapping(target = "group", source = "user.studentGroup")
     UserDTO entityToDTO(User user);
 
 }

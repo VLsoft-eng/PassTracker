@@ -18,12 +18,10 @@ public class UserDTO {
 
     private String fullName;
 
-    private List<GroupDTO> groups;
+    private GroupDTO group;
 
     private UserRole role;
 
-    private Boolean isAccepted;
-
-    private Boolean isDeleted;
+    private Boolean isBlocked;
 
 }

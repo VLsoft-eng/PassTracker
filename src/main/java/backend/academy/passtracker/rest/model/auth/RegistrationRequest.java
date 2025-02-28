@@ -7,8 +7,7 @@ import java.util.List;
 public record RegistrationRequest(
         String fullName,
         String email,
-        List<Long> groupNumbers,
-        String password,
-        UserRole userRole
+        Long groupNumber,
+        String password
 ) {
 }

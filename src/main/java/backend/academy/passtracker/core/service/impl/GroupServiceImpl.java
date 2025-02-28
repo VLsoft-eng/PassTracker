@@ -4,7 +4,6 @@ import backend.academy.passtracker.core.entity.Group;
 import backend.academy.passtracker.core.exception.GroupNotFoundException;
 import backend.academy.passtracker.core.mapper.GroupMapper;
 import backend.academy.passtracker.core.repository.GroupRepository;
-import backend.academy.passtracker.core.service.FacultyService;
 import backend.academy.passtracker.core.service.GroupService;
 import backend.academy.passtracker.rest.model.group.CreateGroupRequest;
 import backend.academy.passtracker.rest.model.group.GroupDTO;
@@ -20,7 +19,6 @@ import java.util.stream.Collectors;
 public class GroupServiceImpl implements GroupService {
 
     private final GroupRepository groupRepository;
-    private final FacultyService facultyService;
     private final GroupMapper groupMapper;
 
     @Override
@@ -46,13 +44,11 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public GroupDTO createGroup(CreateGroupRequest createGroupRequest) {
-        var faculty = facultyService.getRawFacultyById(createGroupRequest.facultyId());
 
         return groupMapper.entityToDTO(
                 groupRepository.save(
                         Group.builder()
                                 .groupNumber(createGroupRequest.groupNumber())
-                                .faculty(faculty)
                                 .isDeleted(false)
                                 .build()
                 )

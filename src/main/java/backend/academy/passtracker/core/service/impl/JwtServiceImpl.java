@@ -42,7 +42,11 @@ public class JwtServiceImpl implements JwtService {
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String userName = extractUserName(token);
-        return (userName.equals(userDetails.getUsername())) && !isTokenExpired(token) && !isTokenBanned(token);
+        return (
+                userName.equals(userDetails.getUsername())
+                        && !isTokenExpired(token)
+//                        && !isTokenBanned(token)
+        );
     }
 
     public void banToken(String token) {

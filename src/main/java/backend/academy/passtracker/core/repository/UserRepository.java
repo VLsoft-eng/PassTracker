@@ -20,14 +20,12 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     @Query(
             value = "select * from users u " +
                     "where lower(u.full_name) like lower(concat('%', :fullName, '%')) " +
-                    "and lower(u.email) like lower(concat('%', :email, '%')) " +
-                    "and u.is_accepted = :isAccepted",
+                    "and lower(u.email) like lower(concat('%', :email, '%'))",
             nativeQuery = true
     )
     Page<User> findAllUsersBySearchStrings(
             @Param("fullName") String fullName,
             @Param("email") String email,
-            @Param("isAccepted") Boolean isAccepted,
             Pageable pageable
     );
 }

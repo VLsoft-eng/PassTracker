@@ -41,28 +41,17 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public LoginResponse register(RegistrationRequest registrationRequest) {
 
-        if (registrationRequest.userRole().equals(UserRole.ROLE_ADMIN)) {
-            throw new BadRequestException("Нельзя зарегистрироваться с ролью 'админ'");
-        }
-
-        if (registrationRequest.groupNumbers() == null
-                || registrationRequest.groupNumbers().isEmpty()) {
+        if (registrationRequest.groupNumber() == null) {
             throw new BadRequestException("Не выбрана группа");
         }
 
-        if (registrationRequest.userRole().equals(UserRole.ROLE_STUDENT)
-                && registrationRequest.groupNumbers().size() > 1) {
-            throw new BadRequestException("У студента не может быть больше одной группы");
-        }
-
-        List<Group> groups = registrationRequest.groupNumbers()
-                .stream().map(groupService::getRawGroupById).toList();
+        Group studentGroup = groupService.getRawGroupById(registrationRequest.groupNumber());
 
         String hashedPassword = passwordEncoder.encode(registrationRequest.password());
         UserCreateDto userCreateDto = registrationMapper.toUserCreateDto(
                 registrationRequest,
                 hashedPassword,
-                groups
+                studentGroup
         );
 
         userService.createUser(userCreateDto);
@@ -88,6 +77,7 @@ public class AuthServiceImpl implements AuthService {
         return new LoginResponse(jwt);
     }
 
+    @Transactional
     public void logout() {
         UsernamePasswordAuthenticationToken authentication =
                 (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();

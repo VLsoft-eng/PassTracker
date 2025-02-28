@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public interface UserService {
-    UserDTO createUser(UserCreateDto userCreateDto);
+    void createUser(UserCreateDto userCreateDto);
 
     UserDTO getUser(UUID userId);
 
@@ -21,11 +21,8 @@ public interface UserService {
     Page<UserDTO> getUsers(
             String fullName,
             String email,
-            Boolean isAccepted,
             Pageable pageable
     );
-
-    UserDTO updateUserActivation(User user, Boolean isAccepted);
 
     UserDTO updateUserPartially(UUID userId, Map<String, Object> updates);
 }

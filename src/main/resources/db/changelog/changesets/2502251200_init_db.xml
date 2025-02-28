@@ -14,13 +14,13 @@
             <column name="password" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
+            <column name="group_number" type="bigint"/>
             <column name="full_name" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
             <column name="role" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="is_accepted" type="bool"/>
             <column name="is_blocked" type="bool" defaultValue="false">
                 <constraints nullable="false"/>
             </column>
@@ -28,23 +28,9 @@
     </changeSet>
 
     <changeSet id="v1-2" author="Sitdikov Yura">
-        <createTable tableName="faculty">
-            <column name="id" type="UUID">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="faculty_name" type="varchar(255)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-    </changeSet>
-
-    <changeSet id="v1-3" author="Sitdikov Yura">
         <createTable tableName="groups">
             <column name="group_number" type="bigint">
                 <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="faculty_id" type="UUID">
-                <constraints nullable="false" foreignKeyName="fk_group_faculty" references="faculty(id)"/>
             </column>
             <column name="is_deleted" type="bool" defaultValue="false">
                 <constraints nullable="false"/>
@@ -52,37 +38,18 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="v1-4" author="Sitdikov Yura">
-        <createTable tableName="user_group">
-            <column name="user_id" type="UUID">
-                <constraints nullable="false"/>
-            </column>
-            <column name="group_number" type="bigint">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-        <addPrimaryKey tableName="user_group" columnNames="user_id, group_number" constraintName="pk_user_group"/>
-        <addForeignKeyConstraint baseTableName="user_group" baseColumnNames="user_id"
-                                 referencedTableName="users" referencedColumnNames="id"
-                                 constraintName="fk_user_group_user"/>
-        <addForeignKeyConstraint baseTableName="user_group" baseColumnNames="group_number"
-                                 referencedTableName="groups" referencedColumnNames="group_number"
-                                 constraintName="fk_user_group_group"/>
-    </changeSet>
-
-    <changeSet id="v1-5" author="Sitdikov Yura">
+    <changeSet id="v1-3" author="Sitdikov Yura">
         <insert tableName="users">
             <column name="id" value="769da7a7-fe2c-44ae-900f-2d5cb4e4ccaf" />
             <column name="email" value="admin@admin.com" />
             <column name="password" value="$2a$10$kww7UUS41iqqAL0zY7kireJo4ybnz2W3ofWWWUYsWal9KwB4LyMu6" />
             <column name="full_name" value="admin" />
             <column name="role" value="admin" />
-            <column name="is_accepted" value="true" />
             <column name="is_blocked" value="false" />
         </insert>
     </changeSet>
 
-    <changeSet id="v1-6" author="Sitdikov Yura">
+    <changeSet id="v1-4" author="Sitdikov Yura">
         <createTable tableName="pass_request">
             <column name="id" type="UUID">
                 <constraints primaryKey="true" nullable="false"/>
@@ -104,7 +71,7 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="v1-7" author="Sitdikov Yura">
+    <changeSet id="v1-5" author="Sitdikov Yura">
         <createTable tableName="minio_file">
             <column name="id" type="UUID">
                 <constraints primaryKey="true" nullable="false"/>
@@ -121,7 +88,7 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="v1-8" author="Sitdikov Yura">
+    <changeSet id="v1-6" author="Sitdikov Yura">
         <createTable tableName="extend_pass_time_request">
             <column name="id" type="UUID">
                 <constraints primaryKey="true" nullable="false"/>

@@ -32,14 +32,14 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public UserDTO createUser(UserCreateDto userCreateDto) {
+    public void createUser(UserCreateDto userCreateDto) {
         if (userRepository.existsByEmail(userCreateDto.email())) {
             throw new EmailAlreadyUsedException(ExceptionMessage.EMAIL_ALREADY_USED);
         }
 
         User user = userMapper.createDTOtoEntity(userCreateDto);
 
-        return userMapper.entityToDTO(userRepository.save(user));
+        userMapper.entityToDTO(userRepository.save(user));
     }
 
     @Transactional(readOnly = true)
@@ -60,22 +60,13 @@ public class UserServiceImpl implements UserService {
     public Page<UserDTO> getUsers(
             String fullName,
             String email,
-            Boolean isAccepted,
             Pageable pageable
     ) {
         return userRepository.findAllUsersBySearchStrings(
                 fullName,
                 email,
-                isAccepted,
                 pageable
         ).map(userMapper::entityToDTO);
-    }
-
-    @Transactional
-    @Override
-    public UserDTO updateUserActivation(User user, Boolean isAccepted) {
-        user.setIsAccepted(isAccepted);
-        return userMapper.entityToDTO(userRepository.save(user));
     }
 
     @Transactional
@@ -93,18 +84,6 @@ public class UserServiceImpl implements UserService {
                     user.setEmail((String) value);
                 }
                 case "password" -> user.setPassword(passwordEncoder.encode((String) value));
-                case "role" -> {
-                    var role = UserRole.fromValue((String) value);
-                    if (role.equals(UserRole.ROLE_ADMIN)) {
-                        throw new BadRequestException("Нельзя поставить себе роль админа");
-                    }
-                    user.setRole(role);
-                    if (role.equals(UserRole.ROLE_TEACHER) || role.equals(UserRole.ROLE_DEANERY)) {
-                        user.setIsAccepted(null);
-                    } else if (role.equals(UserRole.ROLE_STUDENT)) {
-                        user.setIsAccepted(true);
-                    }
-                }
                 default -> throw new IllegalArgumentException("Поле " + key + " нельзя обновить.");
             }
         });

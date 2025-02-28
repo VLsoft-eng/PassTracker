@@ -13,13 +13,9 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface RegistrationMapper {
 
-    @Mapping(target = "isAccepted", expression = "java(processIsAccepted(request))")
-    @Mapping(target = "isDeleted", constant = "false")
+    @Mapping(target = "isBlocked", constant = "false")
+    @Mapping(target = "userRole", constant = "ROLE_STUDENT")
     @Mapping(target = "password", source = "hashedPassword")
-    @Mapping(target = "groups", source = "groups")
-    UserCreateDto toUserCreateDto(RegistrationRequest request, String hashedPassword, List<Group> groups);
-
-    default Boolean processIsAccepted(RegistrationRequest request) {
-        return request.userRole().equals(UserRole.ROLE_STUDENT) ? true : null;
-    }
+    @Mapping(target = "studentGroup", source = "studentGroup")
+    UserCreateDto toUserCreateDto(RegistrationRequest request, String hashedPassword, Group studentGroup);
 }
