@@ -1,12 +1,11 @@
 package backend.academy.passtracker.core.service.impl;
 
-import backend.academy.passtracker.core.dto.UserCreateDto;
-import backend.academy.passtracker.core.entity.Group;
-import backend.academy.passtracker.core.enumeration.UserRole;
-import backend.academy.passtracker.core.exception.BadRequestException;
-import backend.academy.passtracker.core.mapper.RegistrationMapper;
 import backend.academy.passtracker.core.config.security.userDetails.CustomUserDetails;
 import backend.academy.passtracker.core.config.security.userDetails.CustomUserDetailsService;
+import backend.academy.passtracker.core.dto.UserCreateDto;
+import backend.academy.passtracker.core.entity.Group;
+import backend.academy.passtracker.core.exception.BadRequestException;
+import backend.academy.passtracker.core.mapper.RegistrationMapper;
 import backend.academy.passtracker.core.service.AuthService;
 import backend.academy.passtracker.core.service.GroupService;
 import backend.academy.passtracker.core.service.JwtService;
@@ -21,10 +20,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-
-import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
@@ -82,7 +77,8 @@ public class AuthServiceImpl implements AuthService {
         UsernamePasswordAuthenticationToken authentication =
                 (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
 
-        if (authentication != null && authentication.getCredentials() instanceof String token) {
+        if (authentication != null && authentication.getCredentials() != null) {
+            String token = authentication.getCredentials().toString();
             jwtService.banToken(token);
         }
     }

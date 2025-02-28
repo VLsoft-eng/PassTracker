@@ -45,7 +45,7 @@ public class JwtServiceImpl implements JwtService {
         return (
                 userName.equals(userDetails.getUsername())
                         && !isTokenExpired(token)
-//                        && !isTokenBanned(token)
+                        && !isTokenBanned(token)
         );
     }
 
