@@ -6,6 +6,8 @@ import backend.academy.passtracker.rest.model.auth.RegistrationRequest;
 
 public interface AuthService {
     LoginResponse login(LoginRequest loginRequest);
+
     LoginResponse register(RegistrationRequest registrationRequest);
 
+    void logout();
 }

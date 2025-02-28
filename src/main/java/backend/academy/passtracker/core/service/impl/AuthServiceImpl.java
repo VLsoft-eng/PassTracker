@@ -17,11 +17,14 @@ import backend.academy.passtracker.rest.model.auth.RegistrationRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
@@ -83,6 +86,15 @@ public class AuthServiceImpl implements AuthService {
 
         String jwt = jwtService.generateToken(userDetails);
         return new LoginResponse(jwt);
+    }
+
+    public void logout() {
+        UsernamePasswordAuthenticationToken authentication =
+                (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && authentication.getCredentials() instanceof String token) {
+            jwtService.banToken(token);
+        }
     }
 }
 
