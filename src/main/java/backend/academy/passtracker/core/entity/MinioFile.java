@@ -8,20 +8,27 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
 import java.util.UUID;
 
 @Builder
 @Data
-@Entity(name = "faculty")
-@NoArgsConstructor
+@Entity(name = "minio_file")
 @AllArgsConstructor
-public class Faculty {
+@NoArgsConstructor
+public class MinioFile {
 
     @Id
     @Column(name = "id")
     private UUID id;
 
-    @Column(name = "faculty_name", nullable = false)
-    private String facultyName;
+    @Column(name = "upload_time", nullable = false)
+    private Instant uploadTime;
+
+    @Column(name = "name", nullable = false)
+    private String name;
+
+    @Column(name = "size", nullable = false)
+    private Long size;
 
 }

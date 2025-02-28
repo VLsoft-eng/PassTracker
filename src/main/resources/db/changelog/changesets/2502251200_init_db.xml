@@ -21,7 +21,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="is_accepted" type="bool"/>
-            <column name="is_deleted" type="bool" defaultValue="false">
+            <column name="is_blocked" type="bool" defaultValue="false">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -78,7 +78,65 @@
             <column name="full_name" value="admin" />
             <column name="role" value="admin" />
             <column name="is_accepted" value="true" />
-            <column name="is_deleted" value="false" />
+            <column name="is_blocked" value="false" />
         </insert>
+    </changeSet>
+
+    <changeSet id="v1-6" author="Sitdikov Yura">
+        <createTable tableName="pass_request">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_start" type="timestamp with time zone">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_end" type="timestamp with time zone">
+                <constraints nullable="false"/>
+            </column>
+            <column name="file_id" type="UUID"/>
+            <column name="is_accepted" type="bool"/>
+            <column name="create_timestamp" type="timestamp with time zone"/>
+            <column name="update_timestamp" type="timestamp with time zone"/>
+            <column name="message" type="varchar(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="v1-7" author="Sitdikov Yura">
+        <createTable tableName="minio_file">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="upload_time" type="timestamp with time zone">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="size" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="v1-8" author="Sitdikov Yura">
+        <createTable tableName="extend_pass_time_request">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="pass_request_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_end" type="timestamp with time zone">
+                <constraints nullable="false"/>
+            </column>
+            <column name="file_id" type="UUID"/>
+            <column name="is_accepted" type="bool"/>
+            <column name="create_timestamp" type="timestamp with time zone"/>
+            <column name="update_timestamp" type="timestamp with time zone"/>
+            <column name="message" type="varchar(255)"/>
+        </createTable>
     </changeSet>
 </databaseChangeLog>
