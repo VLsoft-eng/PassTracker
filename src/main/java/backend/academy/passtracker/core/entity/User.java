@@ -19,13 +19,13 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "email")
+    @Column(name = "email", nullable = false)
     private String email;
 
-    @Column(name = "password")
+    @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "full_name")
+    @Column(name = "full_name", nullable = false)
     private String fullName;
 
     @ManyToMany
@@ -36,14 +36,14 @@ public class User {
     )
     private List<Group> groups;
 
-    @Column(name = "role")
+    @Column(name = "role", nullable = false)
     @Convert(converter = UserRoleConverter.class)
     private UserRole role;
 
     @Column(name = "is_accepted")
     private Boolean isAccepted;
 
-    @Column(name = "is_deleted")
-    private Boolean isDeleted = false;
+    @Column(name = "is_blocked", nullable = false)
+    private Boolean isBlocked = false;
 
 }
