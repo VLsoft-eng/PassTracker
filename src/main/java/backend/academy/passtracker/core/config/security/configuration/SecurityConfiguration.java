@@ -53,7 +53,8 @@ public class SecurityConfiguration {
     public List<String> unprotectedEndpoints() {
         return List.of(
                 "/auth/**",
-                "/group/**"
+                "/group/{groupId}",
+                "/group/list"
         );
     }
 
@@ -63,14 +64,19 @@ public class SecurityConfiguration {
                 .cors(cors -> cors.configurationSource(corsConfiguration()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/pass/request/pageable").hasAnyRole("ADMIN", "TEACHER")
+                        .requestMatchers(
+                                "/pass/request/pageable",
+                                "/user"
+                        ).hasAnyRole("ADMIN", "DEANERY", "TEACHER")
+                        .requestMatchers(
+                                "/group",
+                                "/{userId}/role"
+                        ).hasAnyRole("ADMIN", "DEANERY")
                         .requestMatchers(
                                 "/pass/request",
                                 "/pass/request/{passRequestId}",
                                 "/pass/request/extend",
-                                "/pass/request/extend/{requestId}",
-                                "/pass/request/my/pageable"
+                                "/pass/request/extend/{requestId}"
                         ).hasAnyRole("ADMIN", "STUDENT")
                         .requestMatchers(unprotectedEndpoints().toArray(new String[]{})).permitAll()
                         .anyRequest().authenticated())

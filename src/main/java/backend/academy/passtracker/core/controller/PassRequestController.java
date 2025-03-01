@@ -7,6 +7,8 @@ import backend.academy.passtracker.rest.model.pass.request.ExtendPassTimeRequest
 import backend.academy.passtracker.rest.model.pass.request.PassRequestDTO;
 import backend.academy.passtracker.rest.model.pass.request.PassRequestRequest;
 import io.minio.errors.MinioException;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -26,10 +28,15 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/pass/request")
 @RequiredArgsConstructor
+@Tag(name = "Заявки на пропуск", description = "Контроллер, отвечающий за заявки на пропуск")
 public class PassRequestController {
 
     private final PassRequestService passRequestService;
 
+    @Operation(
+            summary = "Получение страницы заявок на пропуск по параметрам (деканат, преподаватель)",
+            description = "Позволяет получить страницу заявок на пропуск по параметрам"
+    )
     @GetMapping("/pageable")
     private Page<PassRequestDTO> getPassRequests(
             @RequestParam(required = false) UUID userId,
@@ -54,6 +61,10 @@ public class PassRequestController {
         );
     }
 
+    @Operation(
+            summary = "Получение страницы СВОИХ заявок на пропуск (студент)",
+            description = "Позволяет получить страницу СВОИХ заявок на пропуск"
+    )
     @GetMapping("/my/pageable")
     private Page<PassRequestDTO> getMyPassRequests(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
@@ -68,6 +79,10 @@ public class PassRequestController {
         );
     }
 
+    @Operation(
+            summary = "Создание заявки на пропуск (студент)",
+            description = "Позволяет создать заявку на пропуск"
+    )
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     private PassRequestDTO createPassRequest(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
@@ -83,6 +98,11 @@ public class PassRequestController {
         );
     }
 
+    @Operation(
+            summary = "Изменение заявки на пропуск (студент)",
+            description = "Позволяет студенту изменить заявку на пропуск," +
+                    " ТОЛЬКО КОГДА ЗАЯВКА НЕ РАССМОТРЕНА ДЕКАНАТОМ"
+    )
     @PatchMapping("/{passRequestId}")
     private PassRequestDTO updatePassRequest(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
@@ -92,6 +112,11 @@ public class PassRequestController {
         return passRequestService.updatePassRequest(customUserDetails.getId(), passRequestId, updates);
     }
 
+    @Operation(
+            summary = "Удаление заявки на пропуск (студент)",
+            description = "Позволяет студенту удалить заявку на пропуск," +
+                    " ТОЛЬКО КОГДА ЗАЯВКА НЕ РАССМОТРЕНА ДЕКАНАТОМ"
+    )
     @DeleteMapping("/{passRequestId}")
     private void deletePassRequest(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
@@ -100,6 +125,10 @@ public class PassRequestController {
         passRequestService.deletePassRequest(customUserDetails.getId(), passRequestId);
     }
 
+    @Operation(
+            summary = "Создание заявки на продление пропуска (студент)",
+            description = "Позволяет создать заявку на продление пропуска"
+    )
     @PostMapping("/extend")
     private ExtendPassTimeRequestDTO createExtendPassTimeRequest(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
@@ -114,6 +143,11 @@ public class PassRequestController {
         );
     }
 
+    @Operation(
+            summary = "Изменение заявки на продление пропуска (студент)",
+            description = "Позволяет студенту изменить заявку на продление пропуска," +
+                    " ТОЛЬКО КОГДА ЗАЯВКА НЕ РАССМОТРЕНА ДЕКАНАТОМ"
+    )
     @PatchMapping("/extend/{requestId}")
     private ExtendPassTimeRequestDTO updateExtendPassTimeRequest(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
@@ -123,6 +157,11 @@ public class PassRequestController {
         return passRequestService.updateExtendPassTimeRequest(customUserDetails.getId(), requestId, updates);
     }
 
+    @Operation(
+            summary = "Удаление заявки на продление пропуска (студент)",
+            description = "Позволяет студенту удалить заявку на продление пропуска," +
+                    " ТОЛЬКО КОГДА ЗАЯВКА НЕ РАССМОТРЕНА ДЕКАНАТОМ"
+    )
     @DeleteMapping("/extend/{requestId}")
     private void deleteExtendPassTimeRequest(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
