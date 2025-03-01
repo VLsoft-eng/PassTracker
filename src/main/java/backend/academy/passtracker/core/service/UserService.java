@@ -21,8 +21,13 @@ public interface UserService {
     Page<UserDTO> getUsers(
             String fullName,
             String email,
+            Long groupNumber,
+            UserRole role,
+            Boolean isBlocked,
             Pageable pageable
     );
 
     UserDTO updateUserPartially(UUID userId, Map<String, Object> updates);
+
+    UserDTO changeUserRole(UUID userId, UserRole role);
 }
