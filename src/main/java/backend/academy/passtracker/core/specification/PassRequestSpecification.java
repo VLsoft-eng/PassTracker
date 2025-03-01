@@ -1,5 +1,6 @@
 package backend.academy.passtracker.core.specification;
 
+import backend.academy.passtracker.core.entity.Group;
 import backend.academy.passtracker.core.entity.PassRequest;
 import backend.academy.passtracker.core.entity.User;
 import jakarta.persistence.criteria.Join;
@@ -48,5 +49,16 @@ public class PassRequestSpecification {
 
     public static Specification<PassRequest> isAcceptedEqual(Boolean isAccepted) {
         return (root, query, cb) -> isAccepted == null ? null : cb.equal(root.get("isAccepted"), isAccepted);
+    }
+
+    public static Specification<PassRequest> userInGroup(Long groupNumber) {
+        return (root, query, cb) -> {
+            if (groupNumber == null) {
+                return null;
+            }
+            Join<PassRequest, User> userJoin = root.join("user", JoinType.INNER);
+            Join<User, Group> groupJoin = userJoin.join("studentGroup", JoinType.INNER);
+            return cb.equal(groupJoin.get("groupNumber"), groupNumber);
+        };
     }
 }

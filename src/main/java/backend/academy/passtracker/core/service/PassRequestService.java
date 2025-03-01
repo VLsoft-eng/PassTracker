@@ -19,19 +19,23 @@ public interface PassRequestService {
 
     PassRequest getRawPassRequest(UUID requestId);
 
-    @Transactional(readOnly = true)
     ExtendPassTimeRequestDTO getExtendPassTimeRequest(UUID requestId);
 
-    @Transactional(readOnly = true)
     ExtendPassTimeRequest getRawExtendPassTimeRequest(UUID requestId);
 
-    @Transactional(readOnly = true)
     Page<PassRequestDTO> getPassRequests(
             UUID userId,
             String userSearchString,
             Instant createDateStart,
             Instant createDateEnd,
             Instant date,
+            Long groupNumber,
+            Boolean isAccepted,
+            Pageable pageable
+    );
+
+    Page<PassRequestDTO> getMyPassRequests(
+            UUID userId,
             Boolean isAccepted,
             Pageable pageable
     );

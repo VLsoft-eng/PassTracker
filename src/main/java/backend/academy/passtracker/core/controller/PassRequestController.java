@@ -32,6 +32,7 @@ public class PassRequestController {
             @RequestParam(required = false) Instant createDateStart,
             @RequestParam(required = false) Instant createDateEnd,
             @RequestParam(required = false) Instant date,
+            @RequestParam(required = false) Long groupNumber,
             @RequestParam(required = false) Boolean isAccepted,
             @PageableDefault(size = 10, page = 0, sort = "createTimestamp", direction = Sort.Direction.DESC)
             Pageable pageable
@@ -42,6 +43,21 @@ public class PassRequestController {
                 createDateStart,
                 createDateEnd,
                 date,
+                groupNumber,
+                isAccepted,
+                pageable
+        );
+    }
+
+    @GetMapping("/my/pageable")
+    private Page<PassRequestDTO> getMyPassRequests(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @RequestParam(required = false) Boolean isAccepted,
+            @PageableDefault(size = 10, page = 0, sort = "createTimestamp", direction = Sort.Direction.DESC)
+            Pageable pageable
+    ) {
+        return passRequestService.getMyPassRequests(
+                customUserDetails.getId(),
                 isAccepted,
                 pageable
         );

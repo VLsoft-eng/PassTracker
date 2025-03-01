@@ -9,9 +9,9 @@ import backend.academy.passtracker.rest.model.group.CreateGroupRequest;
 import backend.academy.passtracker.rest.model.group.GroupDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,6 +21,7 @@ public class GroupServiceImpl implements GroupService {
     private final GroupRepository groupRepository;
     private final GroupMapper groupMapper;
 
+    @Transactional(readOnly = true)
     @Override
     public GroupDTO getGroupById(Long groupNumber) {
         return groupMapper.entityToDTO(
@@ -28,23 +29,23 @@ public class GroupServiceImpl implements GroupService {
         );
     }
 
+    @Transactional(readOnly = true)
+    @Override
+    public List<GroupDTO> getGroups(Boolean isDeleted) {
+        return groupRepository.findAllByIsDeleted(isDeleted == null ? false : isDeleted).stream()
+                .map(groupMapper::entityToDTO).collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
     @Override
     public Group getRawGroupById(Long groupNumber) {
         return groupRepository.findById(groupNumber)
                 .orElseThrow(() -> new GroupNotFoundException(groupNumber));
     }
 
-    @Override
-    public List<GroupDTO> getGroupsByFacultyId(UUID facultyId, Boolean isDeleted) {
-        return groupRepository.findAllByFacultyIdAndIsDeleted(facultyId, isDeleted)
-                .stream()
-                .map(groupMapper::entityToDTO)
-                .collect(Collectors.toList());
-    }
-
+    @Transactional
     @Override
     public GroupDTO createGroup(CreateGroupRequest createGroupRequest) {
-
         return groupMapper.entityToDTO(
                 groupRepository.save(
                         Group.builder()
@@ -55,6 +56,7 @@ public class GroupServiceImpl implements GroupService {
         );
     }
 
+    @Transactional
     @Override
     public GroupDTO deleteGroup(Long groupId) {
         var group = groupRepository.findById(groupId).orElseThrow(() -> new GroupNotFoundException(groupId));

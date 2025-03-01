@@ -4,6 +4,7 @@ import backend.academy.passtracker.core.dto.PassRequestFilters;
 import backend.academy.passtracker.core.entity.ExtendPassTimeRequest;
 import backend.academy.passtracker.core.entity.PassRequest;
 import backend.academy.passtracker.core.entity.User;
+import backend.academy.passtracker.core.exception.BadRequestException;
 import backend.academy.passtracker.core.exception.ForbiddenException;
 import backend.academy.passtracker.core.exception.PassRequestNotFoundException;
 import backend.academy.passtracker.core.mapper.ExtendPassTimeRequestMapper;
@@ -78,6 +79,7 @@ public class PassRequestServiceImpl implements PassRequestService {
             Instant createDateStart,
             Instant createDateEnd,
             Instant date,
+            Long groupNumber,
             Boolean isAccepted,
             Pageable pageable
     ) {
@@ -93,6 +95,21 @@ public class PassRequestServiceImpl implements PassRequestService {
                 .createDateStart(createDateStart)
                 .createDateEnd(createDateEnd)
                 .date(date)
+                .groupNumber(groupNumber)
+                .isAccepted(isAccepted)
+                .build();
+
+        Specification<PassRequest> spec = getSpecByFilters(request);
+
+        return passRequestRepository.findAll(spec, pageable).map(passRequestMapper::entityToDTO);
+    }
+
+    @Override
+    public Page<PassRequestDTO> getMyPassRequests(UUID userId, Boolean isAccepted, Pageable pageable) {
+        var user = userService.getRawUser(userId);
+
+        PassRequestFilters request = PassRequestFilters.builder()
+                .user(user)
                 .isAccepted(isAccepted)
                 .build();
 
@@ -132,6 +149,10 @@ public class PassRequestServiceImpl implements PassRequestService {
             throw new ForbiddenException();
         }
 
+        if (passRequest.getIsAccepted() != null) {
+            throw new BadRequestException("Нельзя изменить уже рассмотренный запрос");
+        }
+
         PassRequest finalPassRequest = passRequest;
         updates.forEach((key, value) -> {
             switch (key) {
@@ -154,6 +175,10 @@ public class PassRequestServiceImpl implements PassRequestService {
 
         if (!passRequest.getUser().getId().equals(userId)) {
             throw new ForbiddenException();
+        }
+
+        if (passRequest.getIsAccepted() != null) {
+            throw new BadRequestException("Нельзя удалить уже рассмотренный запрос");
         }
 
         passRequestRepository.delete(passRequest);
@@ -196,6 +221,10 @@ public class PassRequestServiceImpl implements PassRequestService {
             throw new ForbiddenException();
         }
 
+        if (extendRequest.getIsAccepted() != null) {
+            throw new BadRequestException("Нельзя изменить уже рассмотренный запрос");
+        }
+
         ExtendPassTimeRequest finalExtendRequest = extendRequest;
         updates.forEach((key, value) -> {
             if ("dateEnd".equals(key)) {
@@ -221,6 +250,10 @@ public class PassRequestServiceImpl implements PassRequestService {
             throw new ForbiddenException();
         }
 
+        if (extendRequest.getIsAccepted() != null) {
+            throw new BadRequestException("Нельзя удалить уже рассмотренный запрос");
+        }
+
         extendPassTimeRequestRepository.delete(extendRequest);
     }
 
@@ -232,7 +265,8 @@ public class PassRequestServiceImpl implements PassRequestService {
                         request.getCreateDateEnd())
                 )
                 .and(PassRequestSpecification.dateBetweenStartAndEnd(request.getDate()))
-                .and(PassRequestSpecification.isAcceptedEqual(request.getIsAccepted()));
+                .and(PassRequestSpecification.isAcceptedEqual(request.getIsAccepted()))
+                .and(PassRequestSpecification.userInGroup(request.getGroupNumber()));
     }
 
 }

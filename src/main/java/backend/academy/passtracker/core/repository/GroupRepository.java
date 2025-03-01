@@ -10,15 +10,6 @@ import java.util.UUID;
 
 public interface GroupRepository extends JpaRepository<Group, Long> {
 
-    @Query(
-            value = "select * from groups g " +
-                    "where g.faculty_id = :facultyId " +
-                    "and g.is_deleted = :isDeleted",
-            nativeQuery = true
-    )
-    List<Group> findAllByFacultyIdAndIsDeleted(
-            @Param("facultyId") UUID facultyId,
-            @Param("isDeleted") Boolean isDeleted
-    );
+    List<Group> findAllByIsDeleted(Boolean isDeleted);
 
 }

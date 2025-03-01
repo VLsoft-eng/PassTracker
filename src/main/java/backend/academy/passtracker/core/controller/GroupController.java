@@ -22,12 +22,11 @@ public class GroupController {
         return groupService.getGroupById(groupId);
     }
 
-    @GetMapping("/byFaculty/{facultyId}")
-    private List<GroupDTO> getGroupsByFacultyId(
-            @PathVariable("facultyId") UUID facultyId,
-            @RequestParam Boolean isDeleted
+    @GetMapping("/list")
+    private List<GroupDTO> getGroups(
+            @RequestParam(required = false) Boolean isDeleted
     ) {
-        return groupService.getGroupsByFacultyId(facultyId, isDeleted);
+        return groupService.getGroups(isDeleted);
     }
 
 }

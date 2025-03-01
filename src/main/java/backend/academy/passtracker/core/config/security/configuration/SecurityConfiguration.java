@@ -53,8 +53,7 @@ public class SecurityConfiguration {
     public List<String> unprotectedEndpoints() {
         return List.of(
                 "/auth/**",
-                "/group/**",
-                "/faculty/**"
+                "/group/**"
         );
     }
 
@@ -65,6 +64,14 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/pass/request/pageable").hasAnyRole("ADMIN", "TEACHER")
+                        .requestMatchers(
+                                "/pass/request",
+                                "/pass/request/{passRequestId}",
+                                "/pass/request/extend",
+                                "/pass/request/extend/{requestId}",
+                                "/pass/request/my/pageable"
+                        ).hasAnyRole("ADMIN", "STUDENT")
                         .requestMatchers(unprotectedEndpoints().toArray(new String[]{})).permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session ->

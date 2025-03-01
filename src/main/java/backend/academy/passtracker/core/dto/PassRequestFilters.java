@@ -14,5 +14,6 @@ public class PassRequestFilters {
     private Instant createDateStart;
     private Instant createDateEnd;
     private Instant date;
+    private Long groupNumber;
     private Boolean isAccepted;
 }

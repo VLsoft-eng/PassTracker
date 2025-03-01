@@ -11,9 +11,9 @@ public interface GroupService {
 
     GroupDTO getGroupById(Long groupNumber);
 
-    Group getRawGroupById(Long groupNumber);
+    List<GroupDTO> getGroups(Boolean isDeleted);
 
-    List<GroupDTO> getGroupsByFacultyId(UUID facultyId, Boolean isDeleted);
+    Group getRawGroupById(Long groupNumber);
 
     GroupDTO createGroup(CreateGroupRequest createGroupRequest);
 
