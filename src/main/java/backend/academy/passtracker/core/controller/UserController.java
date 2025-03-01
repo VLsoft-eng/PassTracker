@@ -72,7 +72,7 @@ public class UserController {
             @RequestParam(required = false) Long groupNumber,
             @RequestParam(required = false) UserRole role,
             @RequestParam(required = false) Boolean isBlocked,
-            @PageableDefault(size = 10, page = 0, sort = "full_name", direction = Sort.Direction.DESC)
+            @PageableDefault(size = 10, page = 0, sort = "fullName", direction = Sort.Direction.DESC)
             Pageable pageable
     ) {
         return userService.getUsers(fullName, email, groupNumber, role, isBlocked, pageable);

@@ -14,15 +14,15 @@ import java.time.Instant;
 public class UserSpecification {
 
     public static Specification<User> emailLike(String email) {
-        return (root, query, cb) -> email == null ? null : cb.like(root.get("email"), email);
+        return (root, query, cb) -> email == null ? null : cb.like(cb.lower(root.get("email")), "%" + email.toLowerCase() + "%");
     }
 
     public static Specification<User> fullNameLike(String fullName) {
-        return (root, query, cb) -> fullName == null ? null : cb.like(root.get("fullName"), fullName);
+        return (root, query, cb) -> fullName == null ? null : cb.like(cb.lower(root.get("fullName")), "%" + fullName.toLowerCase() + "%");
     }
 
     public static Specification<User> groupNumberEqual(Long groupNumber) {
-        return (root, query, cb) -> groupNumber == null ? null : cb.equal(root.get("groupNumber"), groupNumber);
+        return (root, query, cb) -> groupNumber == null ? null : cb.equal(root.get("studentGroup").get("groupNumber"), groupNumber);
     }
 
     public static Specification<User> roleEqual(UserRole role) {
