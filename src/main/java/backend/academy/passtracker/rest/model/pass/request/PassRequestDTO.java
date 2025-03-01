@@ -22,7 +22,7 @@ public class PassRequestDTO {
 
     private Instant dateEnd;
 
-    private MinioFileDTO minioFile;
+    private List<MinioFileDTO> minioFiles;
 
     private List<ExtendPassTimeRequestDTO> extendPassTimeRequests;
 

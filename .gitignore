@@ -34,3 +34,12 @@ build/
 
 ### Redis ###
 *.rdb
+
+### Redis ###
+/data/
+*.json
+*.csv
+**/*.log
+**/minio/
+/config/
+*.meta

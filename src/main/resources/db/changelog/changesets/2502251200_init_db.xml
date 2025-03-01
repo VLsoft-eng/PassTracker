@@ -63,7 +63,6 @@
             <column name="date_end" type="timestamp with time zone">
                 <constraints nullable="false"/>
             </column>
-            <column name="file_id" type="UUID"/>
             <column name="is_accepted" type="bool"/>
             <column name="create_timestamp" type="timestamp with time zone"/>
             <column name="update_timestamp" type="timestamp with time zone"/>
@@ -99,11 +98,46 @@
             <column name="date_end" type="timestamp with time zone">
                 <constraints nullable="false"/>
             </column>
-            <column name="file_id" type="UUID"/>
             <column name="is_accepted" type="bool"/>
             <column name="create_timestamp" type="timestamp with time zone"/>
             <column name="update_timestamp" type="timestamp with time zone"/>
             <column name="message" type="varchar(255)"/>
         </createTable>
+    </changeSet>
+
+    <changeSet id="v1-7" author="Sitdikov Yura">
+        <createTable tableName="pass_request_file">
+            <column name="request_id" type="UUID">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="file_id" type="UUID">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="request_id" baseTableName="pass_request_file"
+                                 referencedColumnNames="id" referencedTableName="pass_request"
+                                 constraintName="fk_pass_request"/>
+        <addForeignKeyConstraint baseColumnNames="file_id" baseTableName="pass_request_file"
+                                 referencedColumnNames="id" referencedTableName="minio_file"
+                                 constraintName="fk_minio_file"/>
+    </changeSet>
+
+    <changeSet id="v1-8" author="Sitdikov Yura">
+        <createTable tableName="extend_pass_time_request_file">
+            <column name="request_id" type="UUID">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="file_id" type="UUID">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="request_id" baseTableName="extend_pass_time_request_file"
+                                 referencedColumnNames="id" referencedTableName="extend_pass_time_request"
+                                 constraintName="fk_extend_pass_time_request"/>
+        <addForeignKeyConstraint baseColumnNames="file_id" baseTableName="extend_pass_time_request_file"
+                                 referencedColumnNames="id" referencedTableName="minio_file"
+                                 constraintName="fk_minio_file_2"/>
     </changeSet>
 </databaseChangeLog>
