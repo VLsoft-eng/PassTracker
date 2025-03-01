@@ -1,5 +1,7 @@
-package backend.academy.passtracker.core.exception;
+package backend.academy.passtracker.rest.advice;
 
+import backend.academy.passtracker.core.exception.*;
+import backend.academy.passtracker.core.exception.IllegalArgumentException;
 import backend.academy.passtracker.rest.model.common.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -137,7 +139,7 @@ public final class GlobalExceptionHandler {
         );
     }
 
-    @ExceptionHandler(IllegalArgumentException.class)
+    @ExceptionHandler(backend.academy.passtracker.core.exception.IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<Response> handleIllegalArgumentException(IllegalArgumentException e) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
