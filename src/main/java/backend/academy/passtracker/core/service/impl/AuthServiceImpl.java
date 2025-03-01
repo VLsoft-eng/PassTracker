@@ -4,7 +4,6 @@ import backend.academy.passtracker.core.config.security.userDetails.CustomUserDe
 import backend.academy.passtracker.core.config.security.userDetails.CustomUserDetailsService;
 import backend.academy.passtracker.core.dto.UserCreateDto;
 import backend.academy.passtracker.core.entity.Group;
-import backend.academy.passtracker.core.exception.BadRequestException;
 import backend.academy.passtracker.core.mapper.RegistrationMapper;
 import backend.academy.passtracker.core.service.AuthService;
 import backend.academy.passtracker.core.service.GroupService;
@@ -36,13 +35,14 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public LoginResponse register(RegistrationRequest registrationRequest) {
 
-        if (registrationRequest.groupNumber() == null) {
-            throw new BadRequestException("Не выбрана группа");
+        Group studentGroup = null;
+
+        if (registrationRequest.groupNumber() != null) {
+            studentGroup = groupService.getRawGroupById(registrationRequest.groupNumber());
         }
 
-        Group studentGroup = groupService.getRawGroupById(registrationRequest.groupNumber());
-
         String hashedPassword = passwordEncoder.encode(registrationRequest.password());
+
         UserCreateDto userCreateDto = registrationMapper.toUserCreateDto(
                 registrationRequest,
                 hashedPassword,

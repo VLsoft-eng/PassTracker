@@ -11,6 +11,7 @@ import backend.academy.passtracker.core.exception.PassRequestNotFoundException;
 import backend.academy.passtracker.core.exception.TooMuchFilesException;
 import backend.academy.passtracker.core.mapper.ExtendPassTimeRequestMapper;
 import backend.academy.passtracker.core.mapper.PassRequestMapper;
+import backend.academy.passtracker.core.message.ExceptionMessage;
 import backend.academy.passtracker.core.repository.ExtendPassTimeRequestRepository;
 import backend.academy.passtracker.core.repository.PassRequestRepository;
 import backend.academy.passtracker.core.service.MinioFileService;
@@ -121,6 +122,10 @@ public class PassRequestServiceImpl implements PassRequestService {
     public Page<PassRequestDTO> getMyPassRequests(UUID userId, Boolean isAccepted, Pageable pageable) {
         var user = userService.getRawUser(userId);
 
+        if (user.getStudentGroup() == null) {
+            throw new ForbiddenException(ExceptionMessage.REQUIRED_GROUP);
+        }
+
         PassRequestFilters request = PassRequestFilters.builder()
                 .user(user)
                 .isAccepted(isAccepted)
@@ -139,6 +144,10 @@ public class PassRequestServiceImpl implements PassRequestService {
             List<MultipartFile> files
     ) throws MinioException {
         var user = userService.getRawUser(userId);
+
+        if (user.getStudentGroup() == null) {
+            throw new ForbiddenException(ExceptionMessage.REQUIRED_GROUP);
+        }
 
         if (files != null && files.size() > maxFileCount) {
             throw new TooMuchFilesException(String
@@ -177,12 +186,17 @@ public class PassRequestServiceImpl implements PassRequestService {
     public PassRequestDTO updatePassRequest(UUID userId, UUID passRequestId, Map<String, Object> updates) {
         PassRequest passRequest = passRequestRepository.findById(passRequestId)
                 .orElseThrow(() -> new PassRequestNotFoundException(passRequestId));
+        var user = userService.getRawUser(userId);
 
         if (!passRequest.getUser().getId().equals(userId)) {
             throw new ForbiddenException();
         }
 
-        if (passRequest.getIsAccepted() != null) {
+        if (user.getStudentGroup() == null) {
+            throw new ForbiddenException(ExceptionMessage.REQUIRED_GROUP);
+        }
+
+        if (passRequest.getIsAccepted()) {
             throw new BadRequestException("Нельзя изменить уже рассмотренный запрос");
         }
 
