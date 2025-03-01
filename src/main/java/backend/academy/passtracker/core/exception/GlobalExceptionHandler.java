@@ -11,6 +11,48 @@ import java.time.LocalDateTime;
 
 @RestControllerAdvice
 public final class GlobalExceptionHandler {
+
+    @ExceptionHandler(BadExtensionException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<Response> handleBadExtensionException(BadExtensionException e) {
+        return new ResponseEntity<>(new Response(
+                HttpStatus.BAD_REQUEST.value(),
+                LocalDateTime.now(),
+                e.getMessage()
+        ), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(FileWithSuchNameAlreadyExistException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<Response> handleFileWithSuchNameAlreadyExistException(
+            FileWithSuchNameAlreadyExistException e) {
+        return new ResponseEntity<>(new Response(
+                HttpStatus.BAD_REQUEST.value(),
+                LocalDateTime.now(),
+                e.getMessage()
+        ), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(TooMuchFilesException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<Response> handleTooMuchFilesException(TooMuchFilesException e) {
+        return new ResponseEntity<>(new Response(
+                HttpStatus.BAD_REQUEST.value(),
+                LocalDateTime.now(),
+                e.getMessage()
+        ), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(FileNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<Response> handleFileNotFoundException(FileNotFoundException e) {
+        return new ResponseEntity<>(new Response(
+                HttpStatus.NOT_FOUND.value(),
+                LocalDateTime.now(),
+                e.getMessage()
+        ), HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(BadRequestException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<Response> handleBadRequestException(BadRequestException e) {

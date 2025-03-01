@@ -6,11 +6,14 @@ import backend.academy.passtracker.rest.model.pass.request.ExtendPassTimeRequest
 import backend.academy.passtracker.rest.model.pass.request.ExtendPassTimeRequestRequest;
 import backend.academy.passtracker.rest.model.pass.request.PassRequestDTO;
 import backend.academy.passtracker.rest.model.pass.request.PassRequestRequest;
+import io.minio.errors.MinioException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -40,13 +43,17 @@ public interface PassRequestService {
             Pageable pageable
     );
 
-    PassRequestDTO createPassRequest(UUID userId, PassRequestRequest request);
+    PassRequestDTO createPassRequest(UUID userId, PassRequestRequest request, List<MultipartFile> files) throws MinioException;
 
     PassRequestDTO updatePassRequest(UUID userId, UUID passRequestId, Map<String, Object> updates);
 
     void deletePassRequest(UUID userId, UUID passRequestId);
 
-    ExtendPassTimeRequestDTO createExtendPassTimeRequest(UUID userId, ExtendPassTimeRequestRequest request);
+    ExtendPassTimeRequestDTO createExtendPassTimeRequest(
+            UUID userId,
+            ExtendPassTimeRequestRequest request,
+            List<MultipartFile> cv
+    ) throws MinioException;
 
     ExtendPassTimeRequestDTO updateExtendPassTimeRequest(
             UUID userId,

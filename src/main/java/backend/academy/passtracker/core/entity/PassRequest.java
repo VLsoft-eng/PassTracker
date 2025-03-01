@@ -31,9 +31,13 @@ public class PassRequest {
     @Column(name = "date_end", nullable = false)
     private Instant dateEnd;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "file_id", referencedColumnName = "id")
-    private MinioFile minioFile;
+    @ManyToMany
+    @JoinTable(
+            name = "pass_request_file",
+            joinColumns = { @JoinColumn(name = "request_id") },
+            inverseJoinColumns = { @JoinColumn(name = "file_id") }
+    )
+    private List<MinioFile> minioFiles;
 
     @OneToMany(mappedBy = "passRequestId", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ExtendPassTimeRequest> extendPassTimeRequests;

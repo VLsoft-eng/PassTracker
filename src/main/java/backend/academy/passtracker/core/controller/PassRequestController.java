@@ -6,15 +6,20 @@ import backend.academy.passtracker.rest.model.pass.request.ExtendPassTimeRequest
 import backend.academy.passtracker.rest.model.pass.request.ExtendPassTimeRequestRequest;
 import backend.academy.passtracker.rest.model.pass.request.PassRequestDTO;
 import backend.academy.passtracker.rest.model.pass.request.PassRequestRequest;
+import io.minio.errors.MinioException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -63,12 +68,19 @@ public class PassRequestController {
         );
     }
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     private PassRequestDTO createPassRequest(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
-            @RequestBody PassRequestRequest passRequestRequest
-    ) {
-        return passRequestService.createPassRequest(customUserDetails.getId(), passRequestRequest);
+            @RequestParam Instant dateStart,
+            @RequestParam Instant dateEnd,
+            @RequestParam(required = false) String message,
+            @RequestPart(name = "files", required = false) List<MultipartFile> files
+    ) throws MinioException {
+        return passRequestService.createPassRequest(
+                customUserDetails.getId(),
+                PassRequestRequest.builder().dateStart(dateStart).dateEnd(dateEnd).message(message).build(),
+                files
+        );
     }
 
     @PatchMapping("/{passRequestId}")
@@ -91,9 +103,15 @@ public class PassRequestController {
     @PostMapping("/extend")
     private ExtendPassTimeRequestDTO createExtendPassTimeRequest(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
-            @RequestBody ExtendPassTimeRequestRequest extendPassTimeRequestRequest
-    ) {
-        return passRequestService.createExtendPassTimeRequest(customUserDetails.getId(), extendPassTimeRequestRequest);
+            @RequestParam UUID requestId,
+            @RequestParam Instant dateEnd,
+            @RequestPart(name = "files", required = false) List<MultipartFile> files
+    ) throws MinioException {
+        return passRequestService.createExtendPassTimeRequest(
+                customUserDetails.getId(),
+                ExtendPassTimeRequestRequest.builder().passRequestId(requestId).dateEnd(dateEnd).build(),
+                files
+        );
     }
 
     @PatchMapping("/extend/{requestId}")

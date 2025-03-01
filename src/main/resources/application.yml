@@ -21,7 +21,15 @@ spring:
       port: 6380
       password: redis_pass
 
+minio:
+  accessKey: ${MINIO_ROOT_USER:minioadmin}
+  secretKey: ${MINIO_ROOT_PASSWORD:minioadmin}
+  endpoint: ${MINIO_URL:http://localhost:9000}
+
 jwt:
   signing-key: "my-super-long-secret-key-that-can-secure-your-account-data"
   expiration-time: 1000000000
 
+file-upload:
+  allowed-extensions: ${FILE_EXTENSIONS:doc, docx, pdf, png, jpeg, jpg, webp, bmp, tif, tiff, svg, hdr, heic}
+  max-files-count: ${MAX_FILES_COUNT:5}

@@ -14,8 +14,6 @@ public class PassRequestRequest {
 
     private Instant dateEnd;
 
-    private UUID minioFileId;
-
     private String message;
 
 }

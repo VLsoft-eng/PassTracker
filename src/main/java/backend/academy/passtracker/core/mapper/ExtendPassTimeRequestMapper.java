@@ -10,10 +10,9 @@ import backend.academy.passtracker.rest.model.pass.request.PassRequestRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring", uses = {UserMapper.class, MinioFileMapper.class, ExtendPassTimeRequestMapper.class})
+@Mapper(componentModel = "spring", uses = {MinioFileMapper.class})
 public interface ExtendPassTimeRequestMapper {
 
-    @Mapping(target = "passRequestId", source = "passRequestId")
     ExtendPassTimeRequestDTO entityToDTO(ExtendPassTimeRequest request);
 
 }

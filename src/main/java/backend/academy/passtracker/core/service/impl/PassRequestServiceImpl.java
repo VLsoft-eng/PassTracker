@@ -2,15 +2,18 @@ package backend.academy.passtracker.core.service.impl;
 
 import backend.academy.passtracker.core.dto.PassRequestFilters;
 import backend.academy.passtracker.core.entity.ExtendPassTimeRequest;
+import backend.academy.passtracker.core.entity.MinioFile;
 import backend.academy.passtracker.core.entity.PassRequest;
 import backend.academy.passtracker.core.entity.User;
 import backend.academy.passtracker.core.exception.BadRequestException;
 import backend.academy.passtracker.core.exception.ForbiddenException;
 import backend.academy.passtracker.core.exception.PassRequestNotFoundException;
+import backend.academy.passtracker.core.exception.TooMuchFilesException;
 import backend.academy.passtracker.core.mapper.ExtendPassTimeRequestMapper;
 import backend.academy.passtracker.core.mapper.PassRequestMapper;
 import backend.academy.passtracker.core.repository.ExtendPassTimeRequestRepository;
 import backend.academy.passtracker.core.repository.PassRequestRepository;
+import backend.academy.passtracker.core.service.MinioFileService;
 import backend.academy.passtracker.core.service.PassRequestService;
 import backend.academy.passtracker.core.service.UserService;
 import backend.academy.passtracker.core.specification.PassRequestSpecification;
@@ -18,14 +21,19 @@ import backend.academy.passtracker.rest.model.pass.request.ExtendPassTimeRequest
 import backend.academy.passtracker.rest.model.pass.request.ExtendPassTimeRequestRequest;
 import backend.academy.passtracker.rest.model.pass.request.PassRequestDTO;
 import backend.academy.passtracker.rest.model.pass.request.PassRequestRequest;
+import io.minio.errors.MinioException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -40,6 +48,11 @@ public class PassRequestServiceImpl implements PassRequestService {
 
     private final PassRequestMapper passRequestMapper;
     private final ExtendPassTimeRequestMapper extendPassTimeRequestMapper;
+
+    private final MinioFileService minioFileService;
+
+    @Value("${file-upload.max-files-count}")
+    private int maxFileCount;
 
     @Transactional(readOnly = true)
     @Override
@@ -120,20 +133,40 @@ public class PassRequestServiceImpl implements PassRequestService {
 
     @Transactional
     @Override
-    public PassRequestDTO createPassRequest(UUID userId, PassRequestRequest request) {
+    public PassRequestDTO createPassRequest(
+            UUID userId,
+            PassRequestRequest request,
+            List<MultipartFile> files
+    ) throws MinioException {
         var user = userService.getRawUser(userId);
-//        MinioFile minioFile = minioFileRepository.findById(request.getMinioFileId())
-//                .orElse(null);
+
+        if (files != null && files.size() > maxFileCount) {
+            throw new TooMuchFilesException(String
+                    .format("Максимальное количество файлов в запросе равно %s", maxFileCount));
+        }
 
         PassRequest passRequest = PassRequest.builder()
                 .id(UUID.randomUUID())
                 .user(user)
                 .dateStart(request.getDateStart())
                 .dateEnd(request.getDateEnd())
-                .minioFile(null)
+                .minioFiles(List.of())
                 .isAccepted(false)
                 .createTimestamp(Instant.now())
                 .build();
+
+        List<MinioFile> minioFiles = new ArrayList<>();
+
+        if (files != null && !files.isEmpty()) {
+            for (MultipartFile minioFile : files) {
+                var file = minioFileService.uploadFile(minioFile, userId);
+                if (file != null) {
+                    minioFiles.add(file);
+                }
+            }
+        }
+
+        passRequest.setMinioFiles(minioFiles);
 
         passRequest = passRequestRepository.save(passRequest);
         return passRequestMapper.entityToDTO(passRequest);
@@ -159,7 +192,7 @@ public class PassRequestServiceImpl implements PassRequestService {
                 case "dateStart" ->
                         finalPassRequest.setDateStart(Instant.ofEpochSecond(Long.parseLong(value.toString())));
                 case "dateEnd" -> finalPassRequest.setDateEnd(Instant.ofEpochSecond(Long.parseLong(value.toString())));
-                case "minioFile" -> finalPassRequest.setMinioFile(null);
+                case "minioFile" -> finalPassRequest.setMinioFiles(null);
             }
         });
 
@@ -186,11 +219,20 @@ public class PassRequestServiceImpl implements PassRequestService {
 
     @Transactional
     @Override
-    public ExtendPassTimeRequestDTO createExtendPassTimeRequest(UUID userId, ExtendPassTimeRequestRequest request) {
+    public ExtendPassTimeRequestDTO createExtendPassTimeRequest(
+            UUID userId,
+            ExtendPassTimeRequestRequest request,
+            List<MultipartFile> files
+    ) throws MinioException {
         var passRequest = getRawPassRequest(request.getPassRequestId());
 
         if (!passRequest.getUser().getId().equals(userId)) {
             throw new ForbiddenException();
+        }
+
+        if (files != null && files.size() > maxFileCount) {
+            throw new TooMuchFilesException(String
+                    .format("Максимальное количество файлов в запросе равно %s", maxFileCount));
         }
 
         ExtendPassTimeRequest extendRequest = ExtendPassTimeRequest.builder()
@@ -200,6 +242,16 @@ public class PassRequestServiceImpl implements PassRequestService {
                 .isAccepted(false)
                 .createTimestamp(Instant.now())
                 .build();
+
+        List<MinioFile> minioFiles = new ArrayList<>();
+
+        if (files != null && !files.isEmpty()) {
+            for (MultipartFile minioFile : files) {
+                minioFiles.add(minioFileService.uploadFile(minioFile, userId));
+            }
+        }
+
+        extendRequest.setMinioFiles(minioFiles);
 
         extendRequest = extendPassTimeRequestRepository.save(extendRequest);
         return extendPassTimeRequestMapper.entityToDTO(extendRequest);
