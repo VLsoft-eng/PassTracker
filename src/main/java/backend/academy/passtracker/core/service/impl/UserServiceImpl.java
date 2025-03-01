@@ -115,6 +115,8 @@ public class UserServiceImpl implements UserService {
 
         var user = getRawUser(userId);
 
+        user.setRole(role);
+
         return userMapper.entityToDTO(userRepository.save(user));
     }
 
