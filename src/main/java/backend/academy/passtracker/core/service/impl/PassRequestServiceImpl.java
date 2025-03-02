@@ -5,6 +5,7 @@ import backend.academy.passtracker.core.entity.ExtendPassTimeRequest;
 import backend.academy.passtracker.core.entity.MinioFile;
 import backend.academy.passtracker.core.entity.PassRequest;
 import backend.academy.passtracker.core.entity.User;
+import backend.academy.passtracker.core.enumeration.UserRole;
 import backend.academy.passtracker.core.exception.BadRequestException;
 import backend.academy.passtracker.core.exception.ForbiddenException;
 import backend.academy.passtracker.core.exception.PassRequestNotFoundException;
@@ -18,10 +19,7 @@ import backend.academy.passtracker.core.service.MinioFileService;
 import backend.academy.passtracker.core.service.PassRequestService;
 import backend.academy.passtracker.core.service.UserService;
 import backend.academy.passtracker.core.specification.PassRequestSpecification;
-import backend.academy.passtracker.rest.model.pass.request.ExtendPassTimeRequestDTO;
-import backend.academy.passtracker.rest.model.pass.request.ExtendPassTimeRequestRequest;
-import backend.academy.passtracker.rest.model.pass.request.PassRequestDTO;
-import backend.academy.passtracker.rest.model.pass.request.PassRequestRequest;
+import backend.academy.passtracker.rest.model.pass.request.*;
 import io.minio.errors.MinioException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -57,10 +55,15 @@ public class PassRequestServiceImpl implements PassRequestService {
 
     @Transactional(readOnly = true)
     @Override
-    public PassRequestDTO getPassRequest(UUID requestId) {
-        return passRequestMapper.entityToDTO(
-                getRawPassRequest(requestId)
-        );
+    public PassRequestDTO getPassRequest(UUID userId, UUID requestId) {
+        var user = userService.getUser(userId);
+        var request = passRequestMapper.entityToDTO(getRawPassRequest(requestId));
+
+        if (user.getRole().equals(UserRole.ROLE_STUDENT) && !request.getUser().equals(user)) {
+            throw new ForbiddenException();
+        }
+
+        return request;
     }
 
     @Transactional(readOnly = true)
@@ -72,14 +75,6 @@ public class PassRequestServiceImpl implements PassRequestService {
 
     @Transactional(readOnly = true)
     @Override
-    public ExtendPassTimeRequestDTO getExtendPassTimeRequest(UUID requestId) {
-        return extendPassTimeRequestMapper.entityToDTO(
-                getRawExtendPassTimeRequest(requestId)
-        );
-    }
-
-    @Transactional(readOnly = true)
-    @Override
     public ExtendPassTimeRequest getRawExtendPassTimeRequest(UUID requestId) {
         return extendPassTimeRequestRepository.findById(requestId)
                 .orElseThrow(() -> new PassRequestNotFoundException(requestId));
@@ -87,7 +82,7 @@ public class PassRequestServiceImpl implements PassRequestService {
 
     @Transactional(readOnly = true)
     @Override
-    public Page<PassRequestDTO> getPassRequests(
+    public Page<ShortPassRequestDTO> getPassRequests(
             UUID userId,
             String userSearchString,
             Instant createDateStart,
@@ -115,11 +110,11 @@ public class PassRequestServiceImpl implements PassRequestService {
 
         Specification<PassRequest> spec = getSpecByFilters(request);
 
-        return passRequestRepository.findAll(spec, pageable).map(passRequestMapper::entityToDTO);
+        return passRequestRepository.findAll(spec, pageable).map(passRequestMapper::entityToShortDTO);
     }
 
     @Override
-    public Page<PassRequestDTO> getMyPassRequests(UUID userId, Boolean isAccepted, Pageable pageable) {
+    public Page<ShortPassRequestDTO> getMyPassRequests(UUID userId, Boolean isAccepted, Pageable pageable) {
         var user = userService.getRawUser(userId);
 
         if (user.getStudentGroup() == null) {
@@ -133,7 +128,7 @@ public class PassRequestServiceImpl implements PassRequestService {
 
         Specification<PassRequest> spec = getSpecByFilters(request);
 
-        return passRequestRepository.findAll(spec, pageable).map(passRequestMapper::entityToDTO);
+        return passRequestRepository.findAll(spec, pageable).map(passRequestMapper::entityToShortDTO);
     }
 
     @Transactional
@@ -321,6 +316,29 @@ public class PassRequestServiceImpl implements PassRequestService {
         }
 
         extendPassTimeRequestRepository.delete(extendRequest);
+    }
+
+    @Transactional
+    @Override
+    public PassRequestDTO processPassRequest(UUID requestId, Boolean isAccepted) {
+        var request = getRawPassRequest(requestId);
+
+        request.setIsAccepted(isAccepted);
+
+        return passRequestMapper.entityToDTO(passRequestRepository.save(request));
+    }
+
+    @Transactional
+    @Override
+    public PassRequestDTO processExtendPassTimeRequest(UUID requestId, Boolean isAccepted) {
+        var extendRequest = getRawExtendPassTimeRequest(requestId);
+        extendRequest.setIsAccepted(isAccepted);
+
+        var request = getRawPassRequest(extendRequest.getPassRequestId());
+        request.setDateEnd(extendRequest.getDateEnd());
+
+        extendPassTimeRequestRepository.save(extendRequest);
+        return passRequestMapper.entityToDTO(passRequestRepository.save(request));
     }
 
     private Specification<PassRequest> getSpecByFilters(PassRequestFilters request) {

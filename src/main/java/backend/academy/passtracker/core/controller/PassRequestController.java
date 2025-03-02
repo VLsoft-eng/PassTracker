@@ -2,10 +2,7 @@ package backend.academy.passtracker.core.controller;
 
 import backend.academy.passtracker.core.config.security.userDetails.CustomUserDetails;
 import backend.academy.passtracker.core.service.PassRequestService;
-import backend.academy.passtracker.rest.model.pass.request.ExtendPassTimeRequestDTO;
-import backend.academy.passtracker.rest.model.pass.request.ExtendPassTimeRequestRequest;
-import backend.academy.passtracker.rest.model.pass.request.PassRequestDTO;
-import backend.academy.passtracker.rest.model.pass.request.PassRequestRequest;
+import backend.academy.passtracker.rest.model.pass.request.*;
 import io.minio.errors.MinioException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -38,7 +35,7 @@ public class PassRequestController {
             description = "Позволяет получить страницу заявок на пропуск по параметрам"
     )
     @GetMapping("/pageable")
-    private Page<PassRequestDTO> getPassRequests(
+    private Page<ShortPassRequestDTO> getPassRequests(
             @RequestParam(required = false) UUID userId,
             @RequestParam(required = false) String userSearchString,
             @RequestParam(required = false) Instant createDateStart,
@@ -66,7 +63,7 @@ public class PassRequestController {
             description = "Позволяет получить страницу СВОИХ заявок на пропуск"
     )
     @GetMapping("/my/pageable")
-    private Page<PassRequestDTO> getMyPassRequests(
+    private Page<ShortPassRequestDTO> getMyPassRequests(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @RequestParam(required = false) Boolean isAccepted,
             @PageableDefault(size = 10, page = 0, sort = "createTimestamp", direction = Sort.Direction.DESC)
@@ -76,6 +73,21 @@ public class PassRequestController {
                 customUserDetails.getId(),
                 isAccepted,
                 pageable
+        );
+    }
+
+    @Operation(
+            summary = "Получение заявки на пропуск по идентификатору",
+            description = "Позволяет получить заявку на пропуск"
+    )
+    @GetMapping
+    private PassRequestDTO getPassRequestById(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @RequestParam UUID requestId
+    ) {
+        return passRequestService.getPassRequest(
+                customUserDetails.getId(),
+                requestId
         );
     }
 
@@ -129,7 +141,7 @@ public class PassRequestController {
             summary = "Создание заявки на продление пропуска (студент)",
             description = "Позволяет создать заявку на продление пропуска"
     )
-    @PostMapping("/extend")
+    @PostMapping(value = "/extend", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     private ExtendPassTimeRequestDTO createExtendPassTimeRequest(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @RequestParam UUID requestId,

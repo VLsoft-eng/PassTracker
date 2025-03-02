@@ -7,6 +7,7 @@ import backend.academy.passtracker.core.entity.User;
 import backend.academy.passtracker.rest.model.pass.request.ExtendPassTimeRequestDTO;
 import backend.academy.passtracker.rest.model.pass.request.PassRequestDTO;
 import backend.academy.passtracker.rest.model.pass.request.PassRequestRequest;
+import backend.academy.passtracker.rest.model.pass.request.ShortExtendPassTimeRequestDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -14,5 +15,7 @@ import org.mapstruct.Mapping;
 public interface ExtendPassTimeRequestMapper {
 
     ExtendPassTimeRequestDTO entityToDTO(ExtendPassTimeRequest request);
+
+    ShortExtendPassTimeRequestDTO entityToShortDTO(ExtendPassTimeRequest request);
 
 }

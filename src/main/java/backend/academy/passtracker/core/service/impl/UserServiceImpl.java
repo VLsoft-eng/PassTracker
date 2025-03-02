@@ -12,6 +12,7 @@ import backend.academy.passtracker.core.exception.UserNotFoundException;
 import backend.academy.passtracker.core.mapper.UserMapper;
 import backend.academy.passtracker.core.message.ExceptionMessage;
 import backend.academy.passtracker.core.repository.UserRepository;
+import backend.academy.passtracker.core.service.GroupService;
 import backend.academy.passtracker.core.service.UserService;
 import backend.academy.passtracker.core.specification.PassRequestSpecification;
 import backend.academy.passtracker.core.specification.UserSpecification;
@@ -35,6 +36,8 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+
+    private final GroupService groupService;
 
     @Transactional
     @Override
@@ -99,6 +102,15 @@ public class UserServiceImpl implements UserService {
                     user.setEmail((String) value);
                 }
                 case "password" -> user.setPassword(passwordEncoder.encode((String) value));
+                case "groupNumber" -> {
+                    var group = groupService.getRawGroupById((Long) value);
+
+                    if (group.getIsDeleted()) {
+                        throw new BadRequestException("Группы " + value.toString() + " больше не существует");
+                    }
+
+                    user.setStudentGroup(group);
+                }
                 default -> throw new IllegalArgumentException("Поле " + key + " нельзя обновить.");
             }
         });
@@ -116,7 +128,19 @@ public class UserServiceImpl implements UserService {
         var user = getRawUser(userId);
 
         user.setRole(role);
+        return userMapper.entityToDTO(userRepository.save(user));
+    }
 
+    @Transactional
+    @Override
+    public UserDTO changeUserBlock(UUID userId, Boolean isBlocked) {
+        var user = getRawUser(userId);
+
+        if (user.getRole().equals(UserRole.ROLE_ADMIN)) {
+            throw new BadRequestException("Нельзя заблокировать админа");
+        }
+
+        user.setIsBlocked(isBlocked);
         return userMapper.entityToDTO(userRepository.save(user));
     }
 

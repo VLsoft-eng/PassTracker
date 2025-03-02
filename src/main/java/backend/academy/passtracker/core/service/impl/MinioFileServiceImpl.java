@@ -9,6 +9,7 @@ import backend.academy.passtracker.core.repository.ExtendPassTimeRequestReposito
 import backend.academy.passtracker.core.repository.MinioFileRepository;
 import backend.academy.passtracker.core.repository.PassRequestRepository;
 import backend.academy.passtracker.core.service.MinioFileService;
+import backend.academy.passtracker.rest.model.minio.file.MinioFileDTO;
 import io.minio.MinioClient;
 import io.minio.GetObjectArgs;
 import io.minio.PutObjectArgs;
@@ -16,7 +17,6 @@ import io.minio.MakeBucketArgs;
 import io.minio.BucketExistsArgs;
 import io.minio.errors.MinioException;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -24,7 +24,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
@@ -136,5 +135,13 @@ public class MinioFileServiceImpl implements MinioFileService {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public MinioFileDTO getMinioFile(UUID fileId) {
+        return minioFileMapper.entityToDTO(
+                minioFileRepository.findById(fileId).orElseThrow(() -> new FileNotFoundException(fileId))
+        );
     }
 }

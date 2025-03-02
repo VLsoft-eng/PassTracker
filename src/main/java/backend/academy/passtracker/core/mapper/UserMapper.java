@@ -2,7 +2,7 @@ package backend.academy.passtracker.core.mapper;
 
 import backend.academy.passtracker.core.dto.UserCreateDto;
 import backend.academy.passtracker.core.entity.User;
-import backend.academy.passtracker.core.enumeration.UserRole;
+import backend.academy.passtracker.rest.model.user.ShortUserDTO;
 import backend.academy.passtracker.rest.model.user.UserDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -19,5 +19,7 @@ public interface UserMapper {
 
     @Mapping(target = "group", source = "user.studentGroup")
     UserDTO entityToDTO(User user);
+
+    ShortUserDTO entityToShortDTO(User user);
 
 }
