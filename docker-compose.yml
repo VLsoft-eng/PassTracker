@@ -73,8 +73,8 @@ services:
       - "9000:9000"
       - "9001:9001"
     volumes:
-      - ./data:/data
-      - ./config:/root/.minio
+      - ./miniodata:/miniodata
+      - ./minioconfig:/root/.minio
     networks:
       - wallet-network
     environment:

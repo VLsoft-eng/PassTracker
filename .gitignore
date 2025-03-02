@@ -36,7 +36,9 @@ build/
 *.rdb
 
 ### Redis ###
-/data/
+/miniodata/
+/minioconfig/
+/redisdata/
 /sys/
 *.json
 *.csv
