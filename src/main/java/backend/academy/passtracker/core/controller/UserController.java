@@ -42,11 +42,11 @@ public class UserController {
             description = "Позволяет пользователю изменить профиль"
     )
     @PatchMapping("/profile")
-    public ResponseEntity<UserDTO> updateUserPartially(
+    public UserDTO updateUserPartially(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @RequestBody Map<String, Object> updates
     ) {
-        return ResponseEntity.ok(userService.updateUserPartially(customUserDetails.getId(), updates));
+        return userService.updateUserPartially(customUserDetails.getId(), updates);
     }
 
     @Operation(

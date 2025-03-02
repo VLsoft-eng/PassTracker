@@ -1,6 +1,7 @@
 package backend.academy.passtracker.core.controller;
 
 import backend.academy.passtracker.core.service.MinioFileService;
+import backend.academy.passtracker.rest.model.minio.file.MinioFileDTO;
 import io.minio.errors.MinioException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -32,6 +33,17 @@ public class MinioFileController {
             @RequestParam UUID fileId
     ) throws MinioException {
         return minioFileService.downloadFile(fileId, requestId);
+    }
+
+    @Operation(
+            summary = "Получить дто файла",
+            description = "Позволяет пользователю посмотреть дто файла"
+    )
+    @GetMapping
+    private MinioFileDTO getMinioFile(
+            @RequestParam UUID fileId
+    ) {
+        return minioFileService.getMinioFile(fileId);
     }
 
 }

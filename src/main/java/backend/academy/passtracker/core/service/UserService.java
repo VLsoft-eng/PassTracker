@@ -30,4 +30,6 @@ public interface UserService {
     UserDTO updateUserPartially(UUID userId, Map<String, Object> updates);
 
     UserDTO changeUserRole(UUID userId, UserRole role);
+
+    UserDTO changeUserBlock(UUID userId, Boolean isBlocked);
 }

@@ -2,10 +2,7 @@ package backend.academy.passtracker.core.service;
 
 import backend.academy.passtracker.core.entity.ExtendPassTimeRequest;
 import backend.academy.passtracker.core.entity.PassRequest;
-import backend.academy.passtracker.rest.model.pass.request.ExtendPassTimeRequestDTO;
-import backend.academy.passtracker.rest.model.pass.request.ExtendPassTimeRequestRequest;
-import backend.academy.passtracker.rest.model.pass.request.PassRequestDTO;
-import backend.academy.passtracker.rest.model.pass.request.PassRequestRequest;
+import backend.academy.passtracker.rest.model.pass.request.*;
 import io.minio.errors.MinioException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,15 +15,13 @@ import java.util.Map;
 import java.util.UUID;
 
 public interface PassRequestService {
-    PassRequestDTO getPassRequest(UUID requestId);
+    PassRequestDTO getPassRequest(UUID userId, UUID requestId);
 
     PassRequest getRawPassRequest(UUID requestId);
 
-    ExtendPassTimeRequestDTO getExtendPassTimeRequest(UUID requestId);
-
     ExtendPassTimeRequest getRawExtendPassTimeRequest(UUID requestId);
 
-    Page<PassRequestDTO> getPassRequests(
+    Page<ShortPassRequestDTO> getPassRequests(
             UUID userId,
             String userSearchString,
             Instant createDateStart,
@@ -37,7 +32,7 @@ public interface PassRequestService {
             Pageable pageable
     );
 
-    Page<PassRequestDTO> getMyPassRequests(
+    Page<ShortPassRequestDTO> getMyPassRequests(
             UUID userId,
             Boolean isAccepted,
             Pageable pageable
@@ -62,4 +57,9 @@ public interface PassRequestService {
     );
 
     void deleteExtendPassTimeRequest(UUID userId, UUID extendPassRequestId);
+
+    PassRequestDTO processPassRequest(UUID requestId, Boolean isAccepted);
+
+    PassRequestDTO processExtendPassTimeRequest(UUID requestId, Boolean isAccepted);
+
 }
