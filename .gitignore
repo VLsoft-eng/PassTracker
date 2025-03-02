@@ -37,9 +37,8 @@ build/
 
 ### Redis ###
 /data/
+/sys/
 *.json
 *.csv
 **/*.log
-**/minio/
-/config/
 *.meta
