@@ -32,7 +32,7 @@ public class GroupServiceImpl implements GroupService {
     @Transactional(readOnly = true)
     @Override
     public List<GroupDTO> getGroups(Boolean isDeleted) {
-        return groupRepository.findAllByIsDeleted(isDeleted == null ? false : isDeleted).stream()
+        return groupRepository.findAllByIsDeleted(isDeleted != null && isDeleted).stream()
                 .map(groupMapper::entityToDTO).collect(Collectors.toList());
     }
 

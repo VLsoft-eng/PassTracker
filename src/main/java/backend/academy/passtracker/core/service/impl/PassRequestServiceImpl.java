@@ -192,7 +192,21 @@ public class PassRequestServiceImpl implements PassRequestService {
         }
 
         if (passRequest.getIsAccepted()) {
-            throw new BadRequestException("Нельзя изменить уже рассмотренный запрос");
+            throw new BadRequestException(ExceptionMessage.CHANGE_PROCESSED_REQUEST);
+        }
+
+        Instant newDateStart = passRequest.getDateStart();
+        Instant newDateEnd = passRequest.getDateEnd();
+
+        if (updates.containsKey("dateStart")) {
+            newDateStart = Instant.ofEpochSecond(Long.parseLong(updates.get("dateStart").toString()));
+        }
+        if (updates.containsKey("dateEnd")) {
+            newDateEnd = Instant.ofEpochSecond(Long.parseLong(updates.get("dateEnd").toString()));
+        }
+
+        if (newDateEnd.isBefore(newDateStart)) {
+            throw new BadRequestException(ExceptionMessage.START_AFTER_END_DATE);
         }
 
         PassRequest finalPassRequest = passRequest;
@@ -220,7 +234,7 @@ public class PassRequestServiceImpl implements PassRequestService {
         }
 
         if (passRequest.getIsAccepted() != null) {
-            throw new BadRequestException("Нельзя удалить уже рассмотренный запрос");
+            throw new BadRequestException(ExceptionMessage.DELETE_PROCESSED_REQUEST);
         }
 
         passRequestRepository.delete(passRequest);
@@ -237,6 +251,10 @@ public class PassRequestServiceImpl implements PassRequestService {
 
         if (!passRequest.getUser().getId().equals(userId)) {
             throw new ForbiddenException();
+        }
+
+        if (request.getDateEnd().isBefore(passRequest.getDateEnd())) {
+            throw new BadRequestException(ExceptionMessage.START_AFTER_END_DATE_EXTEND);
         }
 
         if (files != null && files.size() > maxFileCount) {
@@ -283,7 +301,14 @@ public class PassRequestServiceImpl implements PassRequestService {
         }
 
         if (extendRequest.getIsAccepted() != null) {
-            throw new BadRequestException("Нельзя изменить уже рассмотренный запрос");
+            throw new BadRequestException(ExceptionMessage.CHANGE_PROCESSED_REQUEST);
+        }
+
+        if (updates.containsKey("dateEnd")) {
+            Instant newDateEnd = Instant.ofEpochSecond(Long.parseLong(updates.get("dateEnd").toString()));
+            if (newDateEnd.isBefore(passRequest.getDateEnd())) {
+                throw new BadRequestException(ExceptionMessage.START_AFTER_END_DATE_EXTEND);
+            }
         }
 
         ExtendPassTimeRequest finalExtendRequest = extendRequest;
@@ -312,7 +337,7 @@ public class PassRequestServiceImpl implements PassRequestService {
         }
 
         if (extendRequest.getIsAccepted() != null) {
-            throw new BadRequestException("Нельзя удалить уже рассмотренный запрос");
+            throw new BadRequestException(ExceptionMessage.CHANGE_PROCESSED_REQUEST);
         }
 
         extendPassTimeRequestRepository.delete(extendRequest);
