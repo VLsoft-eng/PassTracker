@@ -1,15 +1,8 @@
 package backend.academy.passtracker.core.specification;
 
-import backend.academy.passtracker.core.entity.Group;
-import backend.academy.passtracker.core.entity.PassRequest;
 import backend.academy.passtracker.core.entity.User;
 import backend.academy.passtracker.core.enumeration.UserRole;
-import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.JoinType;
-import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
-
-import java.time.Instant;
 
 public class UserSpecification {
 
