@@ -6,6 +6,7 @@ import backend.academy.passtracker.rest.model.auth.LoginResponse;
 import backend.academy.passtracker.rest.model.auth.RegistrationRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,7 +27,7 @@ public class AuthController {
     )
     @PostMapping("/registration")
     private LoginResponse registration(
-            @RequestBody RegistrationRequest registrationRequest
+            @RequestBody @Valid RegistrationRequest registrationRequest
     ) {
         return authService.register(registrationRequest);
     }
@@ -37,7 +38,7 @@ public class AuthController {
     )
     @PostMapping("/login")
     private LoginResponse login(
-            @RequestBody LoginRequest loginRequest
+            @RequestBody @Valid LoginRequest loginRequest
     ) {
         return authService.login(loginRequest);
     }

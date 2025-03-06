@@ -152,8 +152,8 @@ public class PassRequestServiceImpl implements PassRequestService {
         PassRequest passRequest = PassRequest.builder()
                 .id(UUID.randomUUID())
                 .user(user)
-                .dateStart(request.getDateStart())
-                .dateEnd(request.getDateEnd())
+                .dateStart(request.dateStart())
+                .dateEnd(request.dateEnd())
                 .minioFiles(List.of())
                 .isAccepted(false)
                 .createTimestamp(Instant.now())
@@ -247,13 +247,13 @@ public class PassRequestServiceImpl implements PassRequestService {
             ExtendPassTimeRequestRequest request,
             List<MultipartFile> files
     ) throws MinioException {
-        var passRequest = getRawPassRequest(request.getPassRequestId());
+        var passRequest = getRawPassRequest(request.passRequestId());
 
         if (!passRequest.getUser().getId().equals(userId)) {
             throw new ForbiddenException();
         }
 
-        if (request.getDateEnd().isBefore(passRequest.getDateEnd())) {
+        if (request.dateEnd().isBefore(passRequest.getDateEnd())) {
             throw new BadRequestException(ExceptionMessage.START_AFTER_END_DATE_EXTEND);
         }
 
@@ -264,8 +264,8 @@ public class PassRequestServiceImpl implements PassRequestService {
 
         ExtendPassTimeRequest extendRequest = ExtendPassTimeRequest.builder()
                 .id(UUID.randomUUID())
-                .passRequestId(request.getPassRequestId())
-                .dateEnd(request.getDateEnd())
+                .passRequestId(request.passRequestId())
+                .dateEnd(request.dateEnd())
                 .isAccepted(false)
                 .createTimestamp(Instant.now())
                 .build();

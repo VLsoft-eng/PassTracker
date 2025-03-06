@@ -1,17 +1,18 @@
 package backend.academy.passtracker.rest.model.pass.request;
 
-import lombok.Builder;
-import lombok.Data;
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.Instant;
 import java.util.UUID;
 
-@Data
-@Builder
-public class ExtendPassTimeRequestRequest {
 
-    private UUID passRequestId;
+public record ExtendPassTimeRequestRequest(
+        @NotNull(message = "ID запроса пропуска не может быть пустым")
+        UUID passRequestId,
 
-    private Instant dateEnd;
-
+        @NotNull(message = "Дата окончания не может быть пустой")
+        @Future(message = "Дата окончания должна быть в будущем")
+        Instant dateEnd
+) {
 }

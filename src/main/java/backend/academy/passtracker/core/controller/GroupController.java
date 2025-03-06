@@ -5,11 +5,11 @@ import backend.academy.passtracker.rest.model.group.CreateGroupRequest;
 import backend.academy.passtracker.rest.model.group.GroupDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -47,7 +47,7 @@ public class GroupController {
     )
     @PostMapping
     private GroupDTO createGroup(
-            @RequestBody CreateGroupRequest createGroupRequest
+            @RequestBody @Valid CreateGroupRequest createGroupRequest
     ) {
         return groupService.createGroup(createGroupRequest);
     }

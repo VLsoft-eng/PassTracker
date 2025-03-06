@@ -98,14 +98,12 @@ public class PassRequestController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     private PassRequestDTO createPassRequest(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
-            @RequestParam Instant dateStart,
-            @RequestParam Instant dateEnd,
-            @RequestParam(required = false) String message,
+            @Valid @RequestBody PassRequestRequest passRequestRequest,
             @RequestPart(name = "files", required = false) List<MultipartFile> files
     ) throws MinioException {
         return passRequestService.createPassRequest(
                 customUserDetails.getId(),
-                PassRequestRequest.builder().dateStart(dateStart).dateEnd(dateEnd).message(message).build(),
+                passRequestRequest,
                 files
         );
     }
@@ -144,13 +142,12 @@ public class PassRequestController {
     @PostMapping(value = "/extend", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     private ExtendPassTimeRequestDTO createExtendPassTimeRequest(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
-            @RequestParam UUID requestId,
-            @RequestParam Instant dateEnd,
+            @Valid @RequestBody ExtendPassTimeRequestRequest extendPassTimeRequestRequest,
             @RequestPart(name = "files", required = false) List<MultipartFile> files
     ) throws MinioException {
         return passRequestService.createExtendPassTimeRequest(
                 customUserDetails.getId(),
-                ExtendPassTimeRequestRequest.builder().passRequestId(requestId).dateEnd(dateEnd).build(),
+                extendPassTimeRequestRequest,
                 files
         );
     }
