@@ -1,9 +1,7 @@
 package backend.academy.passtracker.core.service.impl;
 
-import backend.academy.passtracker.core.dto.PassRequestFilters;
 import backend.academy.passtracker.core.dto.UserCreateDto;
 import backend.academy.passtracker.core.dto.UserFilters;
-import backend.academy.passtracker.core.entity.PassRequest;
 import backend.academy.passtracker.core.entity.User;
 import backend.academy.passtracker.core.enumeration.UserRole;
 import backend.academy.passtracker.core.exception.BadRequestException;
@@ -14,9 +12,9 @@ import backend.academy.passtracker.core.message.ExceptionMessage;
 import backend.academy.passtracker.core.repository.UserRepository;
 import backend.academy.passtracker.core.service.GroupService;
 import backend.academy.passtracker.core.service.UserService;
-import backend.academy.passtracker.core.specification.PassRequestSpecification;
 import backend.academy.passtracker.core.specification.UserSpecification;
 import backend.academy.passtracker.rest.model.user.UserDTO;
+import backend.academy.passtracker.rest.model.user.UserPatchDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,8 +23,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -35,7 +31,6 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    private final PasswordEncoder passwordEncoder;
 
     private final GroupService groupService;
 
@@ -89,31 +84,24 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public UserDTO updateUserPartially(UUID userId, Map<String, Object> updates) {
+    public UserDTO updateUserPartially(UUID userId, UserPatchDTO updates) {
         User user = getRawUser(userId);
 
-        updates.forEach((key, value) -> {
-            switch (key) {
-                case "fullName" -> user.setFullName((String) value);
-                case "email" -> {
-                    if (userRepository.existsByEmail((String) value)) {
-                        throw new EmailAlreadyUsedException(ExceptionMessage.EMAIL_ALREADY_USED);
-                    }
-                    user.setEmail((String) value);
-                }
-                case "password" -> user.setPassword(passwordEncoder.encode((String) value));
-                case "groupNumber" -> {
-                    var group = groupService.getRawGroupById((Long) value);
+        if (updates.getFullName() != null) {
+            user.setFullName(updates.getFullName());
+        }
+        if (updates.getEmail() != null) {
+            user.setEmail(updates.getEmail());
+        }
+        if (updates.getGroup() != null) {
+            var group = groupService.getRawGroupById(updates.getGroup());
 
-                    if (group.getIsDeleted()) {
-                        throw new BadRequestException("Группы " + value.toString() + " больше не существует");
-                    }
-
-                    user.setStudentGroup(group);
-                }
-                default -> throw new IllegalArgumentException("Поле " + key + " нельзя обновить.");
+            if (group.getIsDeleted()) {
+                throw new BadRequestException("Группы " + updates.getGroup().toString() + " больше не существует");
             }
-        });
+
+            user.setStudentGroup(group);
+        }
 
         return userMapper.entityToDTO(userRepository.save(user));
     }

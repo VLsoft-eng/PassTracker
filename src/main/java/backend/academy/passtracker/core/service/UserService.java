@@ -4,6 +4,7 @@ import backend.academy.passtracker.core.dto.UserCreateDto;
 import backend.academy.passtracker.core.entity.User;
 import backend.academy.passtracker.core.enumeration.UserRole;
 import backend.academy.passtracker.rest.model.user.UserDTO;
+import backend.academy.passtracker.rest.model.user.UserPatchDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -27,7 +28,7 @@ public interface UserService {
             Pageable pageable
     );
 
-    UserDTO updateUserPartially(UUID userId, Map<String, Object> updates);
+    UserDTO updateUserPartially(UUID userId, UserPatchDTO updates);
 
     UserDTO changeUserRole(UUID userId, UserRole role);
 

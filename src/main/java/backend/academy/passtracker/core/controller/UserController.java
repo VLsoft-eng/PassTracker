@@ -4,6 +4,7 @@ import backend.academy.passtracker.core.config.security.userDetails.CustomUserDe
 import backend.academy.passtracker.core.enumeration.UserRole;
 import backend.academy.passtracker.core.service.UserService;
 import backend.academy.passtracker.rest.model.user.UserDTO;
+import backend.academy.passtracker.rest.model.user.UserPatchDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -44,7 +45,7 @@ public class UserController {
     @PatchMapping("/profile")
     public UserDTO updateUserPartially(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
-            @RequestBody Map<String, Object> updates
+            @RequestBody UserPatchDTO updates
     ) {
         return userService.updateUserPartially(customUserDetails.getId(), updates);
     }
