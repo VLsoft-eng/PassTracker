@@ -13,7 +13,6 @@ public record RegistrationRequest(
         @Size(max = 100, message = "Электронная почта не может быть длиной более 100 символов")
         String email,
 
-        @NotNull(message = "Номер группы не может быть пустым")
         @Positive(message = "Номер группы должен быть положительным числом")
         Long groupNumber,
 
