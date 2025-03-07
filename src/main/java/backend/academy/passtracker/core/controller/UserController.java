@@ -56,10 +56,11 @@ public class UserController {
     )
     @PatchMapping("/{userId}/role")
     private UserDTO changeUserRole(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @PathVariable("userId") UUID userId,
             @RequestParam UserRole role
     ) {
-        return userService.changeUserRole(userId, role);
+        return userService.changeUserRole(customUserDetails.getId(), userId, role);
     }
 
     @Operation(

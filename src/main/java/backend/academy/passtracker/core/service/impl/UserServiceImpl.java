@@ -108,9 +108,15 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public UserDTO changeUserRole(UUID userId, UserRole role) {
+    public UserDTO changeUserRole(UUID myUserId, UUID userId, UserRole role) {
         if (role.equals(UserRole.ROLE_ADMIN)) {
             throw new BadRequestException("Нельзя поставить роль админа");
+        }
+
+        var me = getRawUser(myUserId);
+
+        if (role.equals(UserRole.ROLE_DEANERY) && !me.getRole().equals(UserRole.ROLE_ADMIN)) {
+            throw new BadRequestException("Нельзя поставить роль декана");
         }
 
         var user = getRawUser(userId);

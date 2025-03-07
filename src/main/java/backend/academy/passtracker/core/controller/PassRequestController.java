@@ -98,12 +98,16 @@ public class PassRequestController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     private PassRequestDTO createPassRequest(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
-            @Valid @RequestBody PassRequestRequest passRequestRequest,
+            @RequestParam Instant dateStart,
+            @RequestParam Instant dateEnd,
+            @RequestParam(required = false) String message,
             @RequestPart(name = "files", required = false) List<MultipartFile> files
     ) throws MinioException {
         return passRequestService.createPassRequest(
                 customUserDetails.getId(),
-                passRequestRequest,
+                dateStart,
+                dateEnd,
+                message,
                 files
         );
     }
@@ -139,15 +143,19 @@ public class PassRequestController {
             summary = "Создание заявки на продление пропуска (студент)",
             description = "Позволяет создать заявку на продление пропуска"
     )
-    @PostMapping(value = "/extend", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/{requestId}/extend", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     private ExtendPassTimeRequestDTO createExtendPassTimeRequest(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
-            @Valid @RequestBody ExtendPassTimeRequestRequest extendPassTimeRequestRequest,
+            @PathVariable("requestId") UUID requestId,
+            @RequestParam Instant dateEnd,
+            @RequestParam(required = false) String message,
             @RequestPart(name = "files", required = false) List<MultipartFile> files
     ) throws MinioException {
         return passRequestService.createExtendPassTimeRequest(
                 customUserDetails.getId(),
-                extendPassTimeRequestRequest,
+                dateEnd,
+                message,
+                requestId,
                 files
         );
     }

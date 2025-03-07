@@ -135,10 +135,16 @@ public class PassRequestServiceImpl implements PassRequestService {
     @Override
     public PassRequestDTO createPassRequest(
             UUID userId,
-            PassRequestRequest request,
+            Instant dateStart,
+            Instant dateEnd,
+            String message,
             List<MultipartFile> files
     ) throws MinioException {
         var user = userService.getRawUser(userId);
+
+        if (dateStart.isAfter(dateEnd)) {
+            throw new BadRequestException("Дата начала не может быть позднее даты окончания");
+        }
 
         if (user.getStudentGroup() == null) {
             throw new ForbiddenException(ExceptionMessage.REQUIRED_GROUP);
@@ -152,8 +158,9 @@ public class PassRequestServiceImpl implements PassRequestService {
         PassRequest passRequest = PassRequest.builder()
                 .id(UUID.randomUUID())
                 .user(user)
-                .dateStart(request.dateStart())
-                .dateEnd(request.dateEnd())
+                .dateStart(dateStart)
+                .dateEnd(dateEnd)
+                .message(message)
                 .minioFiles(List.of())
                 .isAccepted(false)
                 .createTimestamp(Instant.now())
@@ -244,16 +251,18 @@ public class PassRequestServiceImpl implements PassRequestService {
     @Override
     public ExtendPassTimeRequestDTO createExtendPassTimeRequest(
             UUID userId,
-            ExtendPassTimeRequestRequest request,
+            Instant dateEnd,
+            String message,
+            UUID requestId,
             List<MultipartFile> files
     ) throws MinioException {
-        var passRequest = getRawPassRequest(request.passRequestId());
+        var passRequest = getRawPassRequest(requestId);
 
         if (!passRequest.getUser().getId().equals(userId)) {
             throw new ForbiddenException();
         }
 
-        if (request.dateEnd().isBefore(passRequest.getDateEnd())) {
+        if (dateEnd.isBefore(passRequest.getDateEnd())) {
             throw new BadRequestException(ExceptionMessage.START_AFTER_END_DATE_EXTEND);
         }
 
@@ -264,8 +273,9 @@ public class PassRequestServiceImpl implements PassRequestService {
 
         ExtendPassTimeRequest extendRequest = ExtendPassTimeRequest.builder()
                 .id(UUID.randomUUID())
-                .passRequestId(request.passRequestId())
-                .dateEnd(request.dateEnd())
+                .passRequestId(requestId)
+                .dateEnd(dateEnd)
+                .message(message)
                 .isAccepted(false)
                 .createTimestamp(Instant.now())
                 .build();
@@ -361,6 +371,9 @@ public class PassRequestServiceImpl implements PassRequestService {
 
         var request = getRawPassRequest(extendRequest.getPassRequestId());
         request.setDateEnd(extendRequest.getDateEnd());
+        if (isAccepted) {
+            request.setIsAccepted(true);
+        }
 
         extendPassTimeRequestRepository.save(extendRequest);
         return passRequestMapper.entityToDTO(passRequestRepository.save(request));

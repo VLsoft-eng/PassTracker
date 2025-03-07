@@ -30,7 +30,7 @@ public interface UserService {
 
     UserDTO updateUserPartially(UUID userId, UserPatchDTO updates);
 
-    UserDTO changeUserRole(UUID userId, UserRole role);
+    UserDTO changeUserRole(UUID myUserId, UUID userId, UserRole role);
 
     UserDTO changeUserBlock(UUID userId, Boolean isBlocked);
 }
