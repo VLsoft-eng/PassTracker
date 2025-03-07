@@ -371,6 +371,9 @@ public class PassRequestServiceImpl implements PassRequestService {
 
         var request = getRawPassRequest(extendRequest.getPassRequestId());
         request.setDateEnd(extendRequest.getDateEnd());
+        if (isAccepted) {
+            request.setIsAccepted(true);
+        }
 
         extendPassTimeRequestRepository.save(extendRequest);
         return passRequestMapper.entityToDTO(passRequestRepository.save(request));
