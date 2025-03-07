@@ -38,7 +38,14 @@ public interface PassRequestService {
             Pageable pageable
     );
 
-    PassRequestDTO createPassRequest(UUID userId, PassRequestRequest request, List<MultipartFile> files) throws MinioException;
+    PassRequestDTO createPassRequest(
+            UUID userId,
+            Instant dateStart,
+            Instant dateEnd,
+            String message,
+            List<MultipartFile> files
+    )
+            throws MinioException;
 
     PassRequestDTO updatePassRequest(UUID userId, UUID passRequestId, Map<String, Object> updates);
 
@@ -46,7 +53,9 @@ public interface PassRequestService {
 
     ExtendPassTimeRequestDTO createExtendPassTimeRequest(
             UUID userId,
-            ExtendPassTimeRequestRequest request,
+            Instant dateEnd,
+            String message,
+            UUID passRequestId,
             List<MultipartFile> cv
     ) throws MinioException;
 

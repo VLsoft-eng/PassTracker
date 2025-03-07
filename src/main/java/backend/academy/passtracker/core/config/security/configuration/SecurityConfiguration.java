@@ -72,7 +72,7 @@ public class SecurityConfiguration {
                         ).hasAnyRole("ADMIN", "DEANERY", "TEACHER")
                         .requestMatchers(
                                 "/group",
-                                "/{userId}/role",
+                                "/user/{userId}/role",
                                 "/dean/**"
                         ).hasAnyRole("ADMIN", "DEANERY")
                         .requestMatchers(
