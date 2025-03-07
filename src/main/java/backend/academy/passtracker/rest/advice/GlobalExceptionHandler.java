@@ -3,6 +3,7 @@ package backend.academy.passtracker.rest.advice;
 import backend.academy.passtracker.core.exception.IllegalArgumentException;
 import backend.academy.passtracker.core.exception.*;
 import backend.academy.passtracker.rest.error.message.ApiErrorName;
+import backend.academy.passtracker.rest.error.message.CustomErrorMessage;
 import backend.academy.passtracker.rest.error.utils.ErrorResponseUtils;
 import backend.academy.passtracker.rest.model.error.ApiErrorResponse;
 import jakarta.validation.ConstraintViolationException;
@@ -122,7 +123,7 @@ public final class GlobalExceptionHandler {
             WebRequest request
     ) {
 
-        return createErrorResponse(HttpStatus.UNAUTHORIZED, ApiErrorName.INVALID_AUTH_CREDENTIALS, e.getMessage(), request);
+        return createErrorResponse(HttpStatus.BAD_REQUEST, ApiErrorName.INVALID_AUTH_CREDENTIALS, CustomErrorMessage.INVALID_AUTH_CREDENTIALS, request);
     }
 
     private ResponseEntity<ApiErrorResponse> createErrorResponse(
