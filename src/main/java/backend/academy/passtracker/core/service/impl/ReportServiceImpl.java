@@ -63,7 +63,7 @@ public class ReportServiceImpl implements ReportService {
             String formattedDateEnd = formatterWithYear.format(dateEnd);
 
             Workbook workbook = new XSSFWorkbook();
-            Sheet sheet = workbook.createSheet("Пропуски " + formattedDateStart + " - " + formattedDateEnd);
+            Sheet sheet = workbook.createSheet("Пропуски " + formattedDateStart + "-" + formattedDateEnd);
 
             Row headerRow = sheet.createRow(0);
             headerRow.createCell(0).setCellValue("Студент");
