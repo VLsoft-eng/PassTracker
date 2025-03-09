@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.Instant;
+import java.util.List;
 
 @Builder
 @Data
@@ -14,6 +15,6 @@ public class PassRequestFilters {
     private Instant createDateStart;
     private Instant createDateEnd;
     private Instant date;
-    private Long groupNumber;
+    private List<Long> groupNumbers;
     private Boolean isAccepted;
 }

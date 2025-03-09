@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -82,13 +83,13 @@ public class PassRequestServiceImpl implements PassRequestService {
 
     @Transactional(readOnly = true)
     @Override
-    public Page<ShortPassRequestDTO> getPassRequests(
+    public Page<ShortPassRequestDTO> getPassRequestsPage(
             UUID userId,
             String userSearchString,
-            Instant createDateStart,
-            Instant createDateEnd,
+            Instant dateStart,
+            Instant dateEnd,
             Instant date,
-            Long groupNumber,
+            List<Long> groupNumbers,
             Boolean isAccepted,
             Pageable pageable
     ) {
@@ -101,16 +102,47 @@ public class PassRequestServiceImpl implements PassRequestService {
         PassRequestFilters request = PassRequestFilters.builder()
                 .user(user)
                 .userSearchString(userSearchString)
-                .createDateStart(createDateStart)
-                .createDateEnd(createDateEnd)
+                .createDateStart(dateStart)
+                .createDateEnd(dateEnd)
                 .date(date)
-                .groupNumber(groupNumber)
+                .groupNumbers(groupNumbers)
                 .isAccepted(isAccepted)
                 .build();
 
         Specification<PassRequest> spec = getSpecByFilters(request);
 
         return passRequestRepository.findAll(spec, pageable).map(passRequestMapper::entityToShortDTO);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<ShortPassRequestDTO> getPassRequests(
+            UUID userId,
+            String userSearchString,
+            Instant dateStart,
+            Instant dateEnd,
+            Instant date,
+            List<Long> groupNumbers,
+            Boolean isAccepted
+    ) {
+        User user = null;
+        if (userId != null) {
+            user = userService.getRawUser(userId);
+        }
+
+        PassRequestFilters request = PassRequestFilters.builder()
+                .user(user)
+                .userSearchString(userSearchString)
+                .createDateStart(dateStart)
+                .createDateEnd(dateEnd)
+                .date(date)
+                .groupNumbers(groupNumbers)
+                .isAccepted(isAccepted)
+                .build();
+
+        Specification<PassRequest> spec = getSpecByFilters(request);
+
+        return passRequestRepository.findAll(spec).stream().map(passRequestMapper::entityToShortDTO).collect(Collectors.toList());
     }
 
     @Override
@@ -382,13 +414,13 @@ public class PassRequestServiceImpl implements PassRequestService {
     private Specification<PassRequest> getSpecByFilters(PassRequestFilters request) {
         return Specification.where(PassRequestSpecification.userEqual(request.getUser()))
                 .and(PassRequestSpecification.userSearchStringLike(request.getUserSearchString()))
-                .and(PassRequestSpecification.createDateBetween(
+                .and(PassRequestSpecification.dateOverlapsWithPeriod(
                         request.getCreateDateStart(),
                         request.getCreateDateEnd())
                 )
                 .and(PassRequestSpecification.dateBetweenStartAndEnd(request.getDate()))
                 .and(PassRequestSpecification.isAcceptedEqual(request.getIsAccepted()))
-                .and(PassRequestSpecification.userInGroup(request.getGroupNumber()));
+                .and(PassRequestSpecification.userInGroup(request.getGroupNumbers()));
     }
 
 }

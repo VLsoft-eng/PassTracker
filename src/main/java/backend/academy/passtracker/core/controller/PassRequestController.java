@@ -6,7 +6,6 @@ import backend.academy.passtracker.rest.model.pass.request.*;
 import io.minio.errors.MinioException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -38,19 +37,19 @@ public class PassRequestController {
     private Page<ShortPassRequestDTO> getPassRequests(
             @RequestParam(required = false) UUID userId,
             @RequestParam(required = false) String userSearchString,
-            @RequestParam(required = false) Instant createDateStart,
-            @RequestParam(required = false) Instant createDateEnd,
+            @RequestParam(required = false) Instant dateStart,
+            @RequestParam(required = false) Instant dateEnd,
             @RequestParam(required = false) Instant date,
-            @RequestParam(required = false) Long groupNumber,
+            @RequestParam(required = false) List<Long> groupNumber,
             @RequestParam(required = false) Boolean isAccepted,
             @PageableDefault(size = 10, page = 0, sort = "createTimestamp", direction = Sort.Direction.DESC)
             Pageable pageable
     ) {
-        return passRequestService.getPassRequests(
+        return passRequestService.getPassRequestsPage(
                 userId,
                 userSearchString,
-                createDateStart,
-                createDateEnd,
+                dateStart,
+                dateEnd,
                 date,
                 groupNumber,
                 isAccepted,
