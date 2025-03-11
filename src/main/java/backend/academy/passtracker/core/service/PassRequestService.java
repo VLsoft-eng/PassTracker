@@ -21,15 +21,25 @@ public interface PassRequestService {
 
     ExtendPassTimeRequest getRawExtendPassTimeRequest(UUID requestId);
 
-    Page<ShortPassRequestDTO> getPassRequests(
+    Page<ShortPassRequestDTO> getPassRequestsPage(
             UUID userId,
             String userSearchString,
-            Instant createDateStart,
-            Instant createDateEnd,
+            Instant dateStart,
+            Instant dateEnd,
             Instant date,
-            Long groupNumber,
+            List<Long> groupNumber,
             Boolean isAccepted,
             Pageable pageable
+    );
+
+    List<ShortPassRequestDTO> getPassRequests(
+            UUID userId,
+            String userSearchString,
+            Instant dateStart,
+            Instant dateEnd,
+            Instant date,
+            List<Long> groupNumbers,
+            Boolean isAccepted
     );
 
     Page<ShortPassRequestDTO> getMyPassRequests(

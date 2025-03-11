@@ -9,6 +9,7 @@ import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.Instant;
+import java.util.List;
 
 public class PassRequestSpecification {
 
@@ -28,16 +29,16 @@ public class PassRequestSpecification {
         };
     }
 
-    public static Specification<PassRequest> createDateBetween(Instant start, Instant end) {
+    public static Specification<PassRequest> dateOverlapsWithPeriod(Instant start, Instant end) {
         return (root, query, cb) -> {
-            if (start == null && end == null) {
+            if (start == null || end == null) {
                 return null;
             }
-            if (start != null && end != null) {
-                return cb.between(root.get("createTimestamp"), start, end);
-            }
-            return start != null ? cb.greaterThanOrEqualTo(root.get("createTimestamp"), start)
-                    : cb.lessThanOrEqualTo(root.get("createTimestamp"), end);
+
+            return cb.and(
+                    cb.lessThanOrEqualTo(root.get("dateStart"), end),
+                    cb.greaterThanOrEqualTo(root.get("dateEnd"), start)
+            );
         };
     }
 
@@ -51,14 +52,14 @@ public class PassRequestSpecification {
         return (root, query, cb) -> isAccepted == null ? null : cb.equal(root.get("isAccepted"), isAccepted);
     }
 
-    public static Specification<PassRequest> userInGroup(Long groupNumber) {
+    public static Specification<PassRequest> userInGroup(List<Long> groupNumber) {
         return (root, query, cb) -> {
-            if (groupNumber == null) {
+            if (groupNumber == null || groupNumber.isEmpty()) {
                 return null;
             }
             Join<PassRequest, User> userJoin = root.join("user", JoinType.INNER);
             Join<User, Group> groupJoin = userJoin.join("studentGroup", JoinType.INNER);
-            return cb.equal(groupJoin.get("groupNumber"), groupNumber);
+            return groupJoin.get("groupNumber").in(groupNumber);
         };
     }
 }
