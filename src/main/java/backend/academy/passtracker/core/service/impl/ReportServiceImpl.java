@@ -1,6 +1,5 @@
 package backend.academy.passtracker.core.service.impl;
 
-import backend.academy.passtracker.core.entity.PassRequest;
 import backend.academy.passtracker.core.exception.BadRequestException;
 import backend.academy.passtracker.core.service.PassRequestService;
 import backend.academy.passtracker.core.service.ReportService;
