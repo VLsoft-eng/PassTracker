@@ -77,10 +77,13 @@ public class SecurityConfiguration {
                         ).hasAnyRole("ADMIN", "DEANERY")
                         .requestMatchers(
                                 "/pass/request",
-                                "/pass/request/{passRequestId}",
-                                "/pass/request/extend",
-                                "/pass/request/extend/{requestId}"
+                                "/pass/request/extend"
                         ).hasAnyRole("ADMIN", "STUDENT")
+                        .requestMatchers(
+                                "/pass/request/{passRequestId}",
+                                "/pass/request/extend/{requestId}"
+                        ).hasAnyRole("ADMIN", "STUDENT", "TEACHER", "DEAN")
+                        .requestMatchers("/report").hasAnyRole("ADMIN", "TEACHER", "DEAN")
                         .requestMatchers(unprotectedEndpoints().toArray(new String[]{})).permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session ->
