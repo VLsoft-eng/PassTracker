@@ -79,10 +79,10 @@ public class PassRequestController {
             summary = "Получение заявки на пропуск по идентификатору",
             description = "Позволяет получить заявку на пропуск"
     )
-    @GetMapping
+    @GetMapping("/{passRequestId}")
     private PassRequestDTO getPassRequestById(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
-            @RequestParam UUID requestId
+            @PathVariable("passRequestId") UUID requestId
     ) {
         return passRequestService.getPassRequest(
                 customUserDetails.getId(),

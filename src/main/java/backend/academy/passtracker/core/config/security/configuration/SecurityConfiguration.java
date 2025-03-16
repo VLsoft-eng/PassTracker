@@ -83,7 +83,7 @@ public class SecurityConfiguration {
                                 "/pass/request/{passRequestId}",
                                 "/pass/request/extend/{requestId}"
                         ).hasAnyRole("ADMIN", "STUDENT", "TEACHER", "DEANERY")
-                        .requestMatchers("/report").hasAnyRole("ADMIN", "TEACHER", "DEAN")
+                        .requestMatchers("/report").hasAnyRole("ADMIN", "TEACHER", "DEANERY")
                         .requestMatchers(unprotectedEndpoints().toArray(new String[]{})).permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session ->
