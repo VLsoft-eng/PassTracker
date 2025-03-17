@@ -1,6 +1,8 @@
 package backend.academy.passtracker.core.controller;
 
 import backend.academy.passtracker.core.config.security.userDetails.CustomUserDetails;
+import backend.academy.passtracker.core.dto.UpdateExtendPassRequestDTO;
+import backend.academy.passtracker.core.dto.UpdatePassRequestDTO;
 import backend.academy.passtracker.core.service.PassRequestService;
 import backend.academy.passtracker.rest.model.pass.request.*;
 import io.minio.errors.MinioException;
@@ -120,8 +122,8 @@ public class PassRequestController {
     private PassRequestDTO updatePassRequest(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @PathVariable("passRequestId") UUID passRequestId,
-            @RequestBody Map<String, Object> updates
-    ) {
+            @RequestBody UpdatePassRequestDTO updates
+            ) {
         return passRequestService.updatePassRequest(customUserDetails.getId(), passRequestId, updates);
     }
 
@@ -168,7 +170,7 @@ public class PassRequestController {
     private ExtendPassTimeRequestDTO updateExtendPassTimeRequest(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @PathVariable("requestId") UUID requestId,
-            @RequestBody Map<String, Object> updates
+            @RequestBody UpdateExtendPassRequestDTO updates
     ) {
         return passRequestService.updateExtendPassTimeRequest(customUserDetails.getId(), requestId, updates);
     }

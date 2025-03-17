@@ -1,5 +1,7 @@
 package backend.academy.passtracker.core.service;
 
+import backend.academy.passtracker.core.dto.UpdateExtendPassRequestDTO;
+import backend.academy.passtracker.core.dto.UpdatePassRequestDTO;
 import backend.academy.passtracker.core.entity.ExtendPassTimeRequest;
 import backend.academy.passtracker.core.entity.PassRequest;
 import backend.academy.passtracker.rest.model.pass.request.*;
@@ -57,7 +59,7 @@ public interface PassRequestService {
     )
             throws MinioException;
 
-    PassRequestDTO updatePassRequest(UUID userId, UUID passRequestId, Map<String, Object> updates);
+    PassRequestDTO updatePassRequest(UUID userId, UUID passRequestId, UpdatePassRequestDTO updates);
 
     void deletePassRequest(UUID userId, UUID passRequestId);
 
@@ -72,7 +74,7 @@ public interface PassRequestService {
     ExtendPassTimeRequestDTO updateExtendPassTimeRequest(
             UUID userId,
             UUID requestId,
-            Map<String, Object> updates
+            UpdateExtendPassRequestDTO updates
     );
 
     void deleteExtendPassTimeRequest(UUID userId, UUID extendPassRequestId);

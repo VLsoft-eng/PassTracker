@@ -1,6 +1,8 @@
 package backend.academy.passtracker.core.service.impl;
 
 import backend.academy.passtracker.core.dto.PassRequestFilters;
+import backend.academy.passtracker.core.dto.UpdateExtendPassRequestDTO;
+import backend.academy.passtracker.core.dto.UpdatePassRequestDTO;
 import backend.academy.passtracker.core.entity.ExtendPassTimeRequest;
 import backend.academy.passtracker.core.entity.MinioFile;
 import backend.academy.passtracker.core.entity.PassRequest;
@@ -217,7 +219,7 @@ public class PassRequestServiceImpl implements PassRequestService {
 
     @Transactional
     @Override
-    public PassRequestDTO updatePassRequest(UUID userId, UUID passRequestId, Map<String, Object> updates) {
+    public PassRequestDTO updatePassRequest(UUID userId, UUID passRequestId, UpdatePassRequestDTO updates) {
         PassRequest passRequest = passRequestRepository.findById(passRequestId)
                 .orElseThrow(() -> new PassRequestNotFoundException(passRequestId));
         var user = userService.getRawUser(userId);
@@ -234,31 +236,21 @@ public class PassRequestServiceImpl implements PassRequestService {
             throw new BadRequestException(ExceptionMessage.CHANGE_PROCESSED_REQUEST);
         }
 
-        Instant newDateStart = passRequest.getDateStart();
-        Instant newDateEnd = passRequest.getDateEnd();
-
-        if (updates.containsKey("dateStart")) {
-            newDateStart = Instant.ofEpochSecond(Long.parseLong(updates.get("dateStart").toString()));
-        }
-        if (updates.containsKey("dateEnd")) {
-            newDateEnd = Instant.ofEpochSecond(Long.parseLong(updates.get("dateEnd").toString()));
-        }
-
-        if (newDateEnd.isBefore(newDateStart)) {
+        if (updates.getDateEnd().isBefore(updates.getDateStart())) {
             throw new BadRequestException(ExceptionMessage.START_AFTER_END_DATE);
         }
 
-        PassRequest finalPassRequest = passRequest;
-        updates.forEach((key, value) -> {
-            switch (key) {
-                case "dateStart" ->
-                        finalPassRequest.setDateStart(Instant.ofEpochSecond(Long.parseLong(value.toString())));
-                case "dateEnd" -> finalPassRequest.setDateEnd(Instant.ofEpochSecond(Long.parseLong(value.toString())));
-                case "minioFile" -> finalPassRequest.setMinioFiles(null);
-            }
-        });
+        if (updates.getDateEnd() != null) {
+            passRequest.setDateEnd(updates.getDateEnd());
+        }
+        if (updates.getDateStart() != null) {
+            passRequest.setDateStart(updates.getDateStart());
+        }
+        if (updates.getMessage() != null) {
+            passRequest.setMessage(updates.getMessage());
+        }
 
-        passRequest = passRequestRepository.save(finalPassRequest);
+        passRequestRepository.save(passRequest);
         return passRequestMapper.entityToDTO(passRequest);
     }
 
@@ -331,7 +323,7 @@ public class PassRequestServiceImpl implements PassRequestService {
     public ExtendPassTimeRequestDTO updateExtendPassTimeRequest(
             UUID userId,
             UUID requestId,
-            Map<String, Object> updates
+            UpdateExtendPassRequestDTO updates
     ) {
         ExtendPassTimeRequest extendRequest = extendPassTimeRequestRepository.findById(requestId)
                 .orElseThrow(() -> new PassRequestNotFoundException(requestId));
@@ -346,23 +338,18 @@ public class PassRequestServiceImpl implements PassRequestService {
             throw new BadRequestException(ExceptionMessage.CHANGE_PROCESSED_REQUEST);
         }
 
-        if (updates.containsKey("dateEnd")) {
-            Instant newDateEnd = Instant.ofEpochSecond(Long.parseLong(updates.get("dateEnd").toString()));
-            if (newDateEnd.isBefore(passRequest.getDateEnd())) {
-                throw new BadRequestException(ExceptionMessage.START_AFTER_END_DATE_EXTEND);
-            }
+        if (passRequest.getDateStart().isAfter(updates.getDateEnd())) {
+            throw new BadRequestException(ExceptionMessage.START_AFTER_END_DATE_EXTEND);
         }
 
-        ExtendPassTimeRequest finalExtendRequest = extendRequest;
-        updates.forEach((key, value) -> {
-            if ("dateEnd".equals(key)) {
-                finalExtendRequest.setDateEnd(Instant.ofEpochSecond(Long.parseLong(value.toString())));
-            } else if ("isAccepted".equals(key)) {
-                finalExtendRequest.setIsAccepted((Boolean) value);
-            }
-        });
+        if (updates.getDateEnd() != null) {
+            extendRequest.setDateEnd(updates.getDateEnd());
+        }
+        if (updates.getMessage() != null) {
+            extendRequest.setMessage(updates.getMessage());
+        }
 
-        extendRequest = extendPassTimeRequestRepository.save(finalExtendRequest);
+        extendPassTimeRequestRepository.save(extendRequest);
         return extendPassTimeRequestMapper.entityToDTO(extendRequest);
     }
 
