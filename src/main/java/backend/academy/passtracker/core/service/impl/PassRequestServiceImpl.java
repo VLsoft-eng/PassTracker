@@ -194,7 +194,7 @@ public class PassRequestServiceImpl implements PassRequestService {
                 .dateEnd(dateEnd)
                 .message(message)
                 .minioFiles(List.of())
-                .isAccepted(false)
+                .isAccepted(null)
                 .createTimestamp(Instant.now())
                 .build();
 
@@ -308,7 +308,7 @@ public class PassRequestServiceImpl implements PassRequestService {
                 .passRequestId(requestId)
                 .dateEnd(dateEnd)
                 .message(message)
-                .isAccepted(false)
+                .isAccepted(null)
                 .createTimestamp(Instant.now())
                 .build();
 
