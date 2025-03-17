@@ -33,10 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -240,10 +237,10 @@ public class PassRequestServiceImpl implements PassRequestService {
             throw new BadRequestException(ExceptionMessage.START_AFTER_END_DATE);
         }
 
-        if (!updates.getDateEnd().equals(null)) {
+        if (Objects.nonNull(updates.getDateEnd())) {
             passRequest.setDateEnd(updates.getDateEnd());
         }
-        if (!updates.getDateStart().equals(null)) {
+        if (Objects.nonNull(updates.getDateStart())) {
             passRequest.setDateStart(updates.getDateStart());
         }
         if (updates.getMessage() != null) {
@@ -342,7 +339,7 @@ public class PassRequestServiceImpl implements PassRequestService {
             throw new BadRequestException(ExceptionMessage.START_AFTER_END_DATE_EXTEND);
         }
 
-        if (!updates.getDateEnd().equals(null)) {
+        if (Objects.nonNull(updates.getDateEnd())) {
             extendRequest.setDateEnd(updates.getDateEnd());
         }
         if (updates.getMessage() != null) {
