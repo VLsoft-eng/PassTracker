@@ -233,11 +233,14 @@ public class PassRequestServiceImpl implements PassRequestService {
             throw new BadRequestException(ExceptionMessage.CHANGE_PROCESSED_REQUEST);
         }
 
-        if (updates.getDateEnd() != null) {
-            if (updates.getDateEnd().isBefore(updates.getDateStart())) {
-                throw new BadRequestException(ExceptionMessage.START_AFTER_END_DATE);
-            }
+        var newDateEnd = updates.getDateEnd() == null ? passRequest.getDateEnd() : updates.getDateEnd();
+        var newDateStart = updates.getDateStart() == null ? passRequest.getDateStart() : updates.getDateStart();
 
+        if (newDateEnd.isBefore(newDateStart)) {
+            throw new BadRequestException(ExceptionMessage.START_AFTER_END_DATE);
+        }
+
+        if (updates.getDateEnd() != null) {
             passRequest.setDateEnd(updates.getDateEnd());
         }
         if (updates.getDateStart() != null) {
