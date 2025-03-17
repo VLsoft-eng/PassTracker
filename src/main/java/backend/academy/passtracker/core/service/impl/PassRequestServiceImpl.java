@@ -232,7 +232,7 @@ public class PassRequestServiceImpl implements PassRequestService {
             throw new ForbiddenException(ExceptionMessage.REQUIRED_GROUP);
         }
 
-        if (passRequest.getIsAccepted()) {
+        if (passRequest.getIsAccepted() != null && passRequest.getIsAccepted()) {
             throw new BadRequestException(ExceptionMessage.CHANGE_PROCESSED_REQUEST);
         }
 
@@ -334,7 +334,7 @@ public class PassRequestServiceImpl implements PassRequestService {
             throw new ForbiddenException();
         }
 
-        if (extendRequest.getIsAccepted() != null) {
+        if (extendRequest.getIsAccepted() != null && extendRequest.getIsAccepted()) {
             throw new BadRequestException(ExceptionMessage.CHANGE_PROCESSED_REQUEST);
         }
 
