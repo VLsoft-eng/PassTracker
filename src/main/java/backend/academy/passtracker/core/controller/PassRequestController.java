@@ -170,7 +170,7 @@ public class PassRequestController {
     private ExtendPassTimeRequestDTO updateExtendPassTimeRequest(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @PathVariable("requestId") UUID requestId,
-            @RequestBody UpdateExtendPassRequestDTO updates
+            @RequestParam UpdateExtendPassRequestDTO updates
     ) {
         return passRequestService.updateExtendPassTimeRequest(customUserDetails.getId(), requestId, updates);
     }

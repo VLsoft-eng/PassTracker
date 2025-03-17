@@ -233,14 +233,14 @@ public class PassRequestServiceImpl implements PassRequestService {
             throw new BadRequestException(ExceptionMessage.CHANGE_PROCESSED_REQUEST);
         }
 
-        if (updates.getDateEnd().isBefore(updates.getDateStart())) {
-            throw new BadRequestException(ExceptionMessage.START_AFTER_END_DATE);
-        }
+        if (updates.getDateEnd() != null) {
+            if (updates.getDateEnd().isBefore(updates.getDateStart())) {
+                throw new BadRequestException(ExceptionMessage.START_AFTER_END_DATE);
+            }
 
-        if (Objects.nonNull(updates.getDateEnd())) {
             passRequest.setDateEnd(updates.getDateEnd());
         }
-        if (Objects.nonNull(updates.getDateStart())) {
+        if (updates.getDateStart() != null) {
             passRequest.setDateStart(updates.getDateStart());
         }
         if (updates.getMessage() != null) {
@@ -335,11 +335,11 @@ public class PassRequestServiceImpl implements PassRequestService {
             throw new BadRequestException(ExceptionMessage.CHANGE_PROCESSED_REQUEST);
         }
 
-        if (passRequest.getDateStart().isAfter(updates.getDateEnd())) {
-            throw new BadRequestException(ExceptionMessage.START_AFTER_END_DATE_EXTEND);
-        }
+        if (updates.getDateEnd() != null) {
+            if (passRequest.getDateStart().isAfter(updates.getDateEnd())) {
+                throw new BadRequestException(ExceptionMessage.START_AFTER_END_DATE_EXTEND);
+            }
 
-        if (Objects.nonNull(updates.getDateEnd())) {
             extendRequest.setDateEnd(updates.getDateEnd());
         }
         if (updates.getMessage() != null) {
