@@ -240,10 +240,10 @@ public class PassRequestServiceImpl implements PassRequestService {
             throw new BadRequestException(ExceptionMessage.START_AFTER_END_DATE);
         }
 
-        if (updates.getDateEnd() != null) {
+        if (!updates.getDateEnd().equals(null)) {
             passRequest.setDateEnd(updates.getDateEnd());
         }
-        if (updates.getDateStart() != null) {
+        if (!updates.getDateStart().equals(null)) {
             passRequest.setDateStart(updates.getDateStart());
         }
         if (updates.getMessage() != null) {
@@ -342,7 +342,7 @@ public class PassRequestServiceImpl implements PassRequestService {
             throw new BadRequestException(ExceptionMessage.START_AFTER_END_DATE_EXTEND);
         }
 
-        if (updates.getDateEnd() != null) {
+        if (!updates.getDateEnd().equals(null)) {
             extendRequest.setDateEnd(updates.getDateEnd());
         }
         if (updates.getMessage() != null) {
