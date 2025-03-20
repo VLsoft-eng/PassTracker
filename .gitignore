@@ -31,3 +31,16 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Redis ###
+*.rdb
+
+### Redis ###
+/miniodata/
+/minioconfig/
+/redisdata/
+/sys/
+*.json
+*.csv
+**/*.log
+*.meta

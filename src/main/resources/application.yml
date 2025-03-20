@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: PassTracker
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/team_dev_db}
+    username: ${POSTGRES_USER:postgres}
+    password: ${POSTGRES_PASSWORD:postgres}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+  liquibase:
+    enabled: true
+    change-log: classpath:/db/changelog/dbchangelog.xml
+  data:
+    redis:
+      host: redis
+      port: 6380
+      password: redis_pass
+
+minio:
+  accessKey: ${MINIO_ROOT_USER:minioadmin}
+  secretKey: ${MINIO_ROOT_PASSWORD:minioadmin}
+  endpoint: ${MINIO_URL:http://localhost:9000}
+
+jwt:
+  signing-key: "my-super-long-secret-key-that-can-secure-your-account-data"
+  expiration-time: 1000000000
+
+file-upload:
+  allowed-extensions: ${FILE_EXTENSIONS:doc, docx, pdf, png, jpeg, jpg, webp, bmp, tif, tiff, svg, hdr, heic}
+  max-files-count: ${MAX_FILES_COUNT:5}
