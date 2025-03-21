@@ -389,8 +389,9 @@ public class PassRequestServiceImpl implements PassRequestService {
         extendRequest.setIsAccepted(isAccepted);
 
         var request = getRawPassRequest(extendRequest.getPassRequestId());
-        request.setDateEnd(extendRequest.getDateEnd());
+
         if (isAccepted) {
+            request.setDateEnd(extendRequest.getDateEnd());
             request.setIsAccepted(true);
         }
 
